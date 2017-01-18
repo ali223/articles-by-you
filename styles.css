@@ -1,0 +1,712 @@
+/*ul{
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+*/
+div{
+
+   border: 0px solid black;
+
+}
+
+div.myfooter{
+  position:absolute;
+   bottom:0px;
+   width:100%;
+   height:50px;   
+   text-align: center;
+  font-size: 0.8em;
+
+display: block;
+ background-color: #333333;
+ color:yellow;
+ opacity:1;
+ 
+ }
+div.myfooter p{
+ font-size: 1em;
+}
+
+div.container{
+    min-height:100%;
+   position:relative;
+
+}
+
+div#spacer{
+  
+  height:10em;
+
+  padding-bottom: 50px;
+  position: relative;
+  
+}
+
+div.topnav{
+     position: static;
+/*     background-color: #333;*/
+     margin: 0px;
+     padding:0px;
+     }  
+
+nav{
+    background-color: #666666;
+    opacity: 0.95;
+}
+
+table.poststable{
+    border: 0px;
+    padding: 5px;
+}
+
+
+
+
+table.poststable th,table.poststable td{
+
+   text-align:left;
+
+   border: 0px;
+
+}
+
+td.tdpost{
+    border: 1px solid black;
+}
+
+.postheading{
+    font-size:1.5em;
+}
+img.logo {    
+    display: block;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*img.bgimage{
+
+    position: fixed;
+
+    left: 0;
+
+    top: 0;
+
+    width: 100%;
+
+    height: auto;
+
+    opacity: 0.3;
+
+}
+*/
+
+
+
+div.main{
+
+   position: relative;
+
+   top:-16px;
+
+   left:0px;
+
+   padding: 0px;
+
+   margin: 0px;
+
+   width: 100%;
+
+   overflow: hidden;
+
+    background-color: #dddddd;
+   opacity: 0.95;
+
+}
+
+
+
+p.slogan{
+
+      position: absolute;
+
+      bottom:0;
+
+      right:15;
+
+      font-style: italic;
+
+}
+
+p.postdescription{
+  
+  font-size: 1.3em;
+  position :relative;
+  top: 1em;
+
+}
+
+div.content{
+
+    padding-top: 20px;
+    padding-left:20px;
+    padding-right:20px;
+
+    padding-bottom:20px;
+    font-size: 0.8em;
+
+     overflow: auto;   
+   max-width:900px;
+
+   margin-top: 20px;
+   margin-left: auto;
+   margin-right: auto;
+
+       position: relative;
+
+   border-radius: 4px;
+      
+   
+    background-color: #dddddd;
+
+    opacity: 0.96; 
+
+}
+
+
+div.blogsPanel{
+  clear: left;
+  background-color: #CCCCCC;
+  overflow: auto;
+  margin-bottom: 2em;
+  padding: 1em;
+  border-radius: 4px;
+  position: relative;
+}
+
+div.panel{
+  background-color: #CCCCCC;
+ border-radius: 4px;
+position: relative;
+  padding: 1em;
+  padding-bottom: 2em;
+  margin-bottom: 2em;
+   
+}
+
+div.searchpanel{
+  background-color: #CCCCCC;
+ border-radius: 4px;
+position: relative;
+  padding: 1em;
+  margin-bottom: 2em;
+  text-align: center;
+   overflow: auto;
+}
+
+
+div.searchpanel label{
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+div.searchpanel input{
+  width: 20em;
+  display: block;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom: 0.8em;
+}
+
+div.searchpanel fieldset{
+  margin-left:auto;
+  margin-right: auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    max-width:300px;
+
+   
+}
+
+
+img.post{
+
+   width: 100px;
+   height: 100px;
+    border-radius: 10px;
+    float:left;
+
+    margin-right:10px;
+
+
+}
+
+
+img.showpost{
+
+    width: 300px;
+
+    height: 200px; 
+
+    
+
+}
+
+ul.mynav{
+
+ list-style-type: none;
+
+
+      margin-top:0px;
+     display:block;
+
+     /*max-width:500px;*/
+
+
+    overflow: auto;
+
+    
+
+  /*  background-color: #333;*/
+    opacity: 0.9;
+ }
+
+ul.mynav li {
+/*  display: inline;*/
+float: left;
+}
+
+
+
+ul.mynav li a{
+
+     display: inline-block;
+
+   /* background-color: #dddddd;*/
+
+     text-decoration: none;
+
+     color: white;
+         transition: 0.5s;
+
+
+    padding: 8px 16px;
+
+     text-align: center;
+     border-right: 1px outset white;
+   /*  border-left: 1px outset white;*/
+
+}
+
+.usertopwelcome{
+    color:white;
+    display:inline-block;
+    font-weight:bold;
+    padding: 8px 16px;
+    border-right: 1px outset white;
+
+}
+
+ul.mynav li a:hover {
+
+    background-color: #00cc00;
+
+    color: black;
+
+}
+
+
+
+ul.mynav li a.active {
+
+   background-color: #00cc00;
+
+    color: black;
+
+}
+
+ul.mynav li.icon a {
+    border:0px;
+} 
+
+ul.mynav li.icon {
+    float: right;
+    display:none;
+}
+
+
+
+body{
+
+    font-size: 100%;
+
+   background-image: url("images/open-book.jpeg");
+   background-size: cover;   
+   margin: 0px;
+   padding: 0px;
+   height: 100%;
+
+    font-family: Helvetica, 'Josefin Sans',Arial, Helvetica, Sans-serif; 
+
+
+
+    }
+
+    html{
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+
+
+
+a:link.readmore, a:visited.readmore{
+
+     text-decoration:none;
+     position: relative;
+
+     display: inline-block;
+     float:right;
+     color:black;
+
+     font-size:1.2em;
+
+     background-color: lightgrey;
+
+     padding: 3px 6px;
+
+     border: 1px solid black;
+
+     border-radius: 4px;
+
+     margin-top:30px;
+
+}
+
+
+
+a:hover.readmore, a:active.readme {
+
+     text-decoration:none;
+
+     display: inline-block;
+
+     background-color: #666666;
+
+     color:white;
+    
+
+  border: 1px solid black;
+
+     border-radius: 4px;
+
+}
+
+p.postedby{
+    font-size: 1em;
+    
+}
+
+p.posttext{
+  font-size: 1.3em;
+}
+
+
+
+table.logintable {
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    max-width:300px;
+}
+
+table.logintable tr,td {
+    border: 0px;
+}
+
+table.userregistertable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;
+}
+
+table.userregistertable th,tr,td{
+    border: 0px;
+}
+
+table.userpoststable th,tr,td{
+    border: 0px;
+    text-align: center;
+    padding-top:5px;
+    padding-bottom:5px;
+    
+}
+table.userpoststable tr:nth-child(even) {
+    background-color:#ffff99;
+}
+table.userpoststable tr:nth-child(odd) {
+    background-color:whitesmoke;
+}
+
+table.userpoststable tr:hover {
+    background-color:lightblue;
+}
+
+table.userpoststable th{
+    background-color: #999999;
+}
+
+
+table.userpoststable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:100%;
+    border-collapse:collapse;
+    
+}
+
+table.userviewposttable{
+    border: 0px;
+}
+table.userviewposttable th,td{
+    border: 0px;
+    text-align:left;
+}
+
+table.usereditposttable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;
+}
+table.usereditposttable td{
+    vertical-align: top;
+}
+
+table.usereditposttable textarea{
+    width:94%;
+    height: 150px;
+}
+
+.userpostheading{
+    font-size:1.5em;
+    
+}
+
+table.usernewposttable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;
+    
+}
+
+table.usernewposttable textarea{
+    width:94%;
+    height: 150px;
+}
+
+table.usernewposttable td{
+    vertical-align: top;
+}
+
+table.userprofiletable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;
+    
+}
+
+table.userpasswordtable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;    
+}
+table.searchtable{
+    margin:auto;
+    border: 2px solid grey;
+    border-radius:10px;
+    padding:10px;
+    width:70%;
+}
+table.searchtable td{
+    text-align:center;
+}
+table.userpasswordtable th{
+    border:0px;
+}
+
+table.singleposttable th{
+    text-align: left;
+}
+table.commentstable{
+    width:100%;
+}
+
+.commentnameheading{
+    margin-bottom:0.2em;
+}
+
+input[type=submit]{
+    width:100%; 
+    padding: 3px 2px;
+    margin: 4px 0;
+}
+input[type=text] {
+    width: 95%;
+    padding: 3px 3px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    border: 1px solid grey;
+    border-radius:3px;
+}
+
+input[type=password]{
+      width: 95%;
+    padding: 3px 3px;
+    margin: 4px 0;
+    box-sizing: border-box;
+    border: 1px solid grey;
+    border-radius:3px;
+}
+
+
+
+input[type=text]:focus {
+    background-color: #ffff99;
+}
+input[type=password]:focus {
+    background-color: #ffff99;
+}
+
+input.commentinput{
+  width: 100%;
+}
+textarea.commenttextarea{
+    width:100%;
+    height: 7em;
+     font-family: Helvetica, 'Josefin Sans',Arial, Helvetica, Sans-serif; 
+
+}
+
+
+input.searchbutton{
+    width:50%;
+}
+input.searchtext{
+    width:50%;
+}
+
+ul.errorslist{
+    margin-left:auto;
+    margin-right:auto;
+    max-width:300px;
+    color: #990000;
+    font-weight: bold;
+    font-size:1.2em;
+}
+
+.headinglogout{
+    margin-left:auto;
+    margin-right:auto;
+    max-width:300px;
+}
+
+span.emphasise{
+    font-weight: bold;
+}
+p.contactme, p.aboutme{
+  font-size: 1.3em;
+    line-height: 1.5em;
+}
+@media screen and (max-width: 680px){
+       table.userregistertable{width:100%;}
+       table.usernewposttable{max-width:100%;}
+       table.usereditposttable{width:100%;}
+       table.userprofiletable{width:100%;}
+       table.userpasswordtable{width:100%;}
+       table.userpoststable{width:100%;}
+       div.content{overflow:auto}
+      
+
+      p.postdescription { top: 0px; }
+
+       input.searchbutton{
+           width:80%;
+        }
+        
+        input.searchtext{
+            width:80%;
+        }
+        
+        
+
+        ul.mynav li {
+            float:none;
+            display:block;
+            text-align: center;
+         }
+         
+         .usertopwelcome{
+             border:0px;
+         }
+       
+       ul.mynav li a {display: block;
+                      text-align: center;                      
+                    
+                      border: 0px;
+       }
+       div.topnav,ul.mynav{ padding:0px;}
+       
+         ul.mynav li:not(:first-child) {display: none;}
+         ul.mynav li.icon {
+            float: right;
+            display: block;          
+            position: absolute;
+              right: 0;
+            top: 0; 
+        }
+        
+  }
+  
+  @media screen and (max-width:680px) {
+  ul.mynav.responsive {position: relative;
+  overflow:hidden;
+     
+  }
+  
+  ul.mynav.responsive li {
+    float: none;
+    display: block;
+ 
+  }
+  ul.mynav.responsive li a {
+      float:none;
+    display: block;
+    text-align: center;
+    
+  }
+}
+
