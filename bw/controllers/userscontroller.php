@@ -28,83 +28,20 @@ class UsersController extends BaseController {
 
         $errorMessages = [];
 
+        // hard-coded dependencies ?? method injection ??
+
         $blogUser = new \BW\tools\bloguser();
 
-        if (empty($_POST['txtusername'])) {
+        $userValidation = new UserValidation();
 
-            $errorMessages[] = "User Name is required";
-        } else {
-
-            $blogUser->username = $this->test_input($_POST['txtusername']);
-            if (!preg_match("/^[a-z]+\d*$/", $blogUser->username)) {
-                $errorMessages[] = "User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233";
-            }
-        }
-
-
-
-        if (empty($_POST['txtuserfirstname'])) {
-
-            $errorMessages[] = "First Name is required";
-        } else {
-
-            $blogUser->userfirstname = $this->test_input($_POST['txtuserfirstname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userfirstname)) {
-                $errorMessages[] = "First Name : Only letters and white space allowed";
-            }
-        }
-
-
-
-        if (empty($_POST['txtuserlastname'])) {
-
-            $errorMessages[] = "Last Name is required";
-        } else {
-
-            $blogUser->userlastname = $this->test_input($_POST['txtuserlastname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userlastname)) {
-                $errorMessages[] = "Last Name : Only letters and white space allowed";
-            }
-        }
-
-
-
-        $blogUser->userurl = $this->test_input($_POST['txtuserurl']);
-        if (!filter_var($blogUser->userurl, FILTER_VALIDATE_URL)) {
-            $errorMessages[] = "Please provide your website address in correct format e.g. (http://www.example.com)";
-        }
-
-        if (empty($_POST['txtuseremail'])) {
-
-            $errorMessages[] = "Email is required";
-        } else {
-
-            $blogUser->useremail = $this->test_input($_POST['txtuseremail']);
-            if (!filter_var($blogUser->useremail, FILTER_VALIDATE_EMAIL)) {
-                $errorMessages[] = "Please provide email address in correct format.";
-            }
-        }
-
-
-
-        if (empty($_POST['txtuserpassword']) || empty($_POST['txtuserpassword2'])) {
-
-            $errorMessages[] = "Password is required";
-        } else {
-            if (!($_POST['txtuserpassword'] == $_POST['txtuserpassword2'])) {
-                $errorMessages[] = "Please make sure that your chosen password and re-entered password match.";
-            } else {
-                $blogUser->userpassword = sha1($this->test_input($_POST['txtuserpassword']));
-            }
-        }
-        $blogUser->regdate = time();
-
+        $errorMessages = $userValidation->validateUserForm($_POST, $blogUser);        
 
         if ($this->blogUserDatabase->userExists($blogUser->username)) {
             $errorMessages[] = "The User Name $blogUser->username alreadys exists. Please choose a different user name.";
         }
 
         // introduce CSRF check
+        
         if ($errorMessages) {
 
            $this->view->setData("blogUser",$blogUser);
@@ -123,14 +60,10 @@ class UsersController extends BaseController {
             $this->view->setContentFile("views/users/userCreated.php");
             $this->view->renderView();
 
-           
             return;
  
         }
 
-
-        // if($errormsgs) echo "<pre>", print_r($errormsgs), "</pre>";
-        //echo "<pre>", print_r($bloguserobj), "</pre>";
     }
 
     public function login() {
@@ -578,6 +511,99 @@ class UsersController extends BaseController {
                 $this->view->setContentFile("views/users/userpassword.php");
                 $this->view->renderView();
       
+    }
+
+}
+
+
+class UserValidation{
+
+    private function testInput($data) {
+
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+
+        return $data;
+    }
+
+    public function validateUserForm(Array $userForm,  $blogUser) {   
+
+        $errorMessages = [];
+
+        if (empty($userForm['txtusername'])) {
+
+            $errorMessages[] = "User Name is required";
+        } else {
+
+            $blogUser->username = $this->testInput($userForm['txtusername']);
+
+            if (!preg_match("/^[a-z]+\d*$/", $blogUser->username)) {
+                $errorMessages[] = "User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233";
+            }
+        }
+
+
+
+        if (empty($userForm['txtuserfirstname'])) {
+
+            $errorMessages[] = "First Name is required";
+        } else {
+
+            $blogUser->userfirstname = $this->testInput($userForm['txtuserfirstname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userfirstname)) {
+                $er_POSTrorMessages[] = "First Name : Only letters and white space allowed";
+            }
+        }
+
+
+
+        if (empty($_POST['txtuserlastname'])) {
+
+            $errorMessages[] = "Last Name is required";
+        } else {
+
+            $blogUser->userlastname = $this->testInput($userForm['txtuserlastname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userlastname)) {
+                $errorMessages[] = "Last Name : Only letters and white space allowed";
+            }
+        }
+
+
+
+        $blogUser->userurl = $this->testInput($userForm['txtuserurl']);
+
+        if (!filter_var($blogUser->userurl, FILTER_VALIDATE_URL)) {
+            $errorMessages[] = "Please provide your website address in correct format e.g. (http://www.example.com)";
+        }
+
+        if (empty($userForm['txtuseremail'])) {
+
+            $errorMessages[] = "Email is required";
+        } else {
+
+            $blogUser->useremail = $this->testInput($userForm['txtuseremail']);
+            if (!filter_var($blogUser->useremail, FILTER_VALIDATE_EMAIL)) {
+                $errorMessages[] = "Please provide email address in correct format.";
+            }
+        }
+
+
+
+        if (empty($userForm['txtuserpassword']) || empty($userForm['txtuserpassword2'])) {
+
+            $errorMessages[] = "Password is required";
+        } else {
+            if (!($userForm['txtuserpassword'] == $userForm['txtuserpassword2'])) {
+                $errorMessages[] = "Please make sure that your chosen password and re-entered password match.";
+            } else {
+                $blogUser->userpassword = sha1($this->testInput($userForm['txtuserpassword']));
+            }
+        }
+
+        $blogUser->regdate = time();
+
+        return $errorMessages;
     }
 
 }
