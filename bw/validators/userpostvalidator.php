@@ -6,17 +6,9 @@ use BW\tools\blogpost;
 use BW\tools\blogpostdb;
 
 
-class UserPostValidator{
+class UserPostValidator extends Validator{
 
-    private function testInput($data) {
-
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-
-        return $data;
-    }
-
+   
     public function validatePostForm(Array $userPostForm,  blogpost $blogPost, Array $userPostImageFile = [], $formType = null) {   
 
         $errorMessages = [];
@@ -25,25 +17,25 @@ class UserPostValidator{
        if (empty($userPostForm['txtposttitle'])) {
             $errorMessages[] = "Please enter the Article Title";
         } else {
-            $blogPost->posttitle = $this->testInput($userPostForm['txtposttitle']);
+            $blogPost->posttitle = $this->filterInput($userPostForm['txtposttitle']);
         }
 
         if (empty($userPostForm['txtpostdesc'])) {
             $errorMessages[] = "Please enter the Article Description";
         } else {
-            $blogPost->postdesc = $this->testInput($userPostForm['txtpostdesc']);
+            $blogPost->postdesc = $this->filterInput($userPostForm['txtpostdesc']);
         }
 
         if (empty($userPostForm['txtposttext'])) {
             $errorMessages[] = "Please enter the Article Text";
         } else {
-            $blogPost->posttext = $this->testInput($userPostForm['txtposttext']);
+            $blogPost->posttext = $this->filterInput($userPostForm['txtposttext']);
         }
 
         if ($userPostForm['txtpostisvisible'] == '') {
             $errorMessages[] = "Please enter the if the Article is a Draft or to be published";
         } else {
-            $blogPost->postisvisible = $this->testInput($userPostForm['txtpostisvisible']);
+            $blogPost->postisvisible = $this->filterInput($userPostForm['txtpostisvisible']);
         }
 
         // store the current date and time as the postdate
