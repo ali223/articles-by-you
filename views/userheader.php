@@ -7,7 +7,7 @@ spl_autoload_register();
 <html lang="en">
 
 <head>
-<!--<base href=" http://localhost/cleansite/ "/> -->
+<base href="/"/> 
 <title><?= isset($pageTitle) ? $pageTitle : "Welcome to Articles By U -- Share your thoughts with the world"?></title>
 
   <meta charset="utf-8">
