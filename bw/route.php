@@ -4,19 +4,21 @@ namespace BW;
 
 class Route {
 
-	private $_uri = [];
+	private $_routes = [];
 
 
 
-	public function add($uri ) {
+	public function add($uri, $controllerName ) {
 
-		$this->_uri[] = trim($uri,'/');
+		$this->_routes[$uri] = $controllerName;
 	}
 
 
 	public function submit(){
 
-		$uriGetParam = isset($_GET['uri']) ? $_GET['uri'] : '';
+		$uriGetParam = $_SERVER['REQUEST_URI'];
+
+		echo $uriGetParam;
 
 
 		$actions = explode('/', $uriGetParam);

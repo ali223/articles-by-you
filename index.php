@@ -4,7 +4,6 @@ namespace BW;
 use BW\controllers\sessionUtility;
 
 
-use BW\controllers\PagesController;
 
 spl_autoload_register();
 
@@ -14,11 +13,8 @@ echo $_SERVER['REQUEST_URI'];
 
 $route = new Route();
 
-$route->add('/');
+$route->add('/', 'PostsController@index');
 
-$route->add('/about');
-
-$route->add('/contact');
 
 echo "<pre>", print_r($route), "</pre>";
 
