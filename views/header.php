@@ -42,15 +42,15 @@ spl_autoload_register();
 <nav>
 
 <ul class="mynav" id="mynavbar">
-<li><a href="index.php?controller=posts&action=index">Home</a></li>
+<li><a href="/index">Home</a></li>
 
-<li><a href="index.php?controller=users&action=login">Sign in </a></li>
+<li><a href="/login">Sign in </a></li>
 
-<li><a href="index.php?controller=users&action=userregistrationform">Register</a></li>
+<li><a href="/registrationform">Register</a></li>
 
-<li><a href="index.php?controller=posts&action=search">Search</a></li>
+<li><a href="/search">Search</a></li>
 
-<li><a href="index.php?controller=pages&action=contact">Contact me</a></li>
+<li><a href="/contact">Contact me</a></li>
 
 <li class="icon">
     <a href="javascript:void(0);" onclick="toggleMenu()">&#9776;</a>

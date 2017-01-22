@@ -88,7 +88,7 @@ class UserRegistrationValidator extends Validator{
         }
 
 
-        $blogUser->regdate = time();
+        $blogUser->userregdate = time();
 
         return $errorMessages;
     }

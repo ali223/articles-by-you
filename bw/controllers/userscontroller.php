@@ -60,8 +60,6 @@ class UsersController {
 
         $errorMessages = [];
 
-        // hard-coded dependencies ?? method injection ??
-
         $blogUser = new bloguser();
 
         $userRegistrationValidator = new UserRegistrationValidator();
@@ -69,8 +67,7 @@ class UsersController {
         $errorMessages = $userRegistrationValidator->validateUserForm($_POST, $blogUser, $this->blogUserDatabase);        
 
 
-        // introduce CSRF check
-        
+      
         if ($errorMessages) {
 
            $this->view->setData("blogUser",$blogUser);
@@ -83,7 +80,6 @@ class UsersController {
         }
 
         if ($this->blogUserDatabase->addUser($blogUser)) {
-            //echo "<Br /> user registered successfully.";
             $this->view->setData("blogUser",$blogUser);
             $this->view->setData("errorMessages", $errorMessages);
             $this->view->setContentFile("views/users/userCreated.php");

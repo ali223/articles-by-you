@@ -30,7 +30,7 @@ if(!empty($errorMessages)) {
 
 ?>
 
-<form name="loginform" method="post" action="index.php?controller=users&action=login">
+<form name="loginform" method="post" action="/login">
 
 <table class="logintable" border="1">
 

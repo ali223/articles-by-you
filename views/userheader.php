@@ -43,16 +43,16 @@ spl_autoload_register();
 <ul class="mynav" id="mynavbar">
 
 <li> <span class="usertopwelcome">Welcome <?= isset($username) ? $username : ' User' ?> </span></li>    
-<li><a href="index.php?controller=users&action=userhome">Your Articles</a></li>
+<li><a href="/home">Your Articles</a></li>
 
-<li><a href="index.php?controller=users&action=usernewarticle">New Article</a></li>
+<li><a href="/newarticle">New Article</a></li>
 
-<li><a href="index.php?controller=users&action=userprofile">Profile</a></li>
+<li><a href="/profile">Profile</a></li>
 
 <!--<li><a href="#">Settings</a></li>-->
 
 
-<li><a href="index.php?controller=users&action=logout">Sign Out</a></li>
+<li><a href="/logout">Sign Out</a></li>
 
 <li class="icon">
     <a href="javascript:void(0);" onclick="toggleMenu()">&#9776;</a>
