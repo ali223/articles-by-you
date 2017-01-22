@@ -1,6 +1,7 @@
 <?php
 
 namespace BW;
+use BW\controllers\sessionUtility;
 
 spl_autoload_register();
 
@@ -52,32 +53,64 @@ function call($controller, $action) {
 
    // create a new instance of the needed controller
     
-    $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
+    // $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
     
-    $blogPostDatabase = new tools\blogpostdb($database);
-    $blogUserDatabase = new tools\bloguserdb($database);
-    $blogCommentDatabase = new tools\blogcommentdb($database);
+    // $blogPostDatabase = new tools\blogpostdb($database);
+    // $blogUserDatabase = new tools\bloguserdb($database);
+    // $blogCommentDatabase = new tools\blogcommentdb($database);
     
-    $view = new controllers\View("views/header.php", '', "views/footer.php");
+    // $view = new controllers\View("views/header.php", '', "views/footer.php");
+
+    // $sessionUtility = new sessionUtility();
     
 
     switch($controller) {
 
       case 'pages':
 
-        $controller = new controllers\PagesController($database, $blogPostDatabase, $blogUserDatabase, $blogCommentDatabase, $view);
+          $view = new controllers\View("views/header.php", '', "views/footer.php");
 
-         break;
+          $sessionUtility = new sessionUtility();
+
+          $controller = new controllers\PagesController($view, $sessionUtility);
+
+          break;
 
       case 'posts':
 
-        $controller = new controllers\PostsController($database, $blogPostDatabase, $blogUserDatabase, $blogCommentDatabase, $view);
+          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
+          
+          $blogPostDatabase = new tools\blogpostdb($database);
 
-         break;
+          $blogUserDatabase = new tools\bloguserdb($database);
+
+
+          $blogCommentDatabase = new tools\blogcommentdb($database);
+          
+          $view = new controllers\View("views/header.php", '', "views/footer.php");
+
+
+          $controller = new controllers\PostsController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view);
+
+           break;
 
       case 'users':
 
-         $controller = new controllers\UsersController($database, $blogPostDatabase, $blogUserDatabase, $blogCommentDatabase, $view);
+          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
+          
+          $blogPostDatabase = new tools\blogpostdb($database);
+
+          $blogUserDatabase = new tools\bloguserdb($database);
+
+          $blogCommentDatabase = new tools\blogcommentdb($database);
+          
+          $view = new controllers\View("views/header.php", '', "views/footer.php");
+
+          $sessionUtility = new sessionUtility();
+
+
+
+         $controller = new controllers\UsersController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view, $sessionUtility);
 
          break;
 

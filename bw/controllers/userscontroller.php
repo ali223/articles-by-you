@@ -1,9 +1,15 @@
 <?php
 
 namespace BW\controllers;
+
 use BW\tools\bloguser;
-use BW\tools\bloguserdb;
 use BW\tools\blogpost;
+use BW\tools\blogcomment;
+
+
+use BW\tools\bloguserdb;
+use BW\tools\blogpostdb;
+use BW\tools\blogcommentdb;
 
 use BW\validators\UserRegistrationValidator;
 use BW\validators\userProfileValidator;
@@ -11,11 +17,29 @@ use BW\validators\userPostValidator;
 
 class UsersController extends BaseController {
 
+    protected $blogPostDatabase;
+    protected $blogUserDatabase;
+    protected $blogCommentDatabase;
+    protected $view;
+    protected $sessionUtility;
+    
+    public function __construct(bloguserdb $blogUserDatabase, blogpostdb $blogPostDatabase, blogcommentdb $blogCommentDatabase, View $view, SessionUtility $sessionUtility) {
+             
+
+        $this->blogPostDatabase = $blogPostDatabase;
+        $this->blogUserDatabase = $blogUserDatabase;
+        $this->blogCommentDatabase = $blogCommentDatabase;
+        $this->view = $view;
+        $this->sessionUtility = $sessionUtility;
+       
+    }
+
+
     public function userregistrationform() {
 
         $pageTitle = "Welcome to Articles By U -- Registration Form";
 
-        
+        $this->view->setData('pageTitle', $pageTitle);
         $this->view->setContentFile("views/users/regform.php");
         $this->view->renderView();
 
@@ -71,7 +95,7 @@ class UsersController extends BaseController {
     }
 
     public function login() {
-        if ($this->isLoggedIn()) {
+        if ($this->sessionUtility->isLoggedIn()) {
             $this->userhome();
             return;
         }
@@ -97,8 +121,8 @@ class UsersController extends BaseController {
             return;
             
         } else {
-            $username = $this->test_input($_POST['txtusername']);
-            $password = $this->test_input($_POST['txtuserpassword']);
+            $username = $this->filterInput($_POST['txtusername']);
+            $password = $this->filterInput($_POST['txtuserpassword']);
         }
 
 
@@ -114,12 +138,12 @@ class UsersController extends BaseController {
         }
 
         //the following lines get executed, if the user has been authenticated successfully
-        $this->storeInSession($username);
+        $this->sessionUtility->storeInSession($username);
         $this->userhome();
     }
 
     public function userhome($message = null) {
-        if (!($this->isLoggedIn())) {
+        if (!($this->sessionUtility->isLoggedIn())) {
             $this->login();
             return;
         }
@@ -127,9 +151,9 @@ class UsersController extends BaseController {
         // the following lines get executed, only if there is a user currently logged in
 
         
-        $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->getLoggedInUsername());
+        $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->sessionUtility->getLoggedInUsername());
         
-        $this->view->setData("username", $this->getLoggedInUsername());
+        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
         $this->view->setData("message", $message);
         $this->view->setData("blogPostsList", $blogPostsList);
         
@@ -140,7 +164,7 @@ class UsersController extends BaseController {
     }
 
     public function userviewarticle() {
-        if (!$this->isLoggedIn()) {
+        if (!$this->sessionUtility->isLoggedIn()) {
             $this->login();
             return;
         }
@@ -152,7 +176,7 @@ class UsersController extends BaseController {
             return;
         }
 
-        $id = $this->test_input($_GET['id']);
+        $id = $this->filterInput($_GET['id']);
         $blogPost = $this->blogPostDatabase->getPost($id);
 
         if (!$blogPost) {
@@ -165,7 +189,7 @@ class UsersController extends BaseController {
         
         $this->view->setData("blogPost", $blogPost);
         $this->view->setData("blogUser", $blogUser);
-        $this->view->setData("username", $this->getLoggedInUsername());
+        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
         $this->view->setHeaderFile("views/userheader.php");
         $this->view->setContentFile("views/users/userviewarticle.php");
         $this->view->renderView();
@@ -174,14 +198,14 @@ class UsersController extends BaseController {
 
     public function usernewarticle() {
 
-        if (!($this->isLoggedIn())) {
+        if (!($this->sessionUtility->isLoggedIn())) {
             $this->login();
             return;
         }
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             
-            $this->view->setData("username", $this->getLoggedInUsername());
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
             $this->view->setHeaderFile("views/userheader.php");            
             $this->view->setContentFile("views/users/usernewarticle.php");
             $this->view->renderView();
@@ -192,7 +216,7 @@ class UsersController extends BaseController {
 
         $errorMessages = [];
 
-         $formType = isset($_POST['formtype']) ? $this->test_input($_POST['formtype']) : '';
+         $formType = isset($_POST['formtype']) ? $this->filterInput($_POST['formtype']) : '';
 
 
         $blogPost = new blogpost();
@@ -203,7 +227,7 @@ class UsersController extends BaseController {
         
         
         // get the currently logged in user's user id and store it in the new post data
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->getLoggedInUsername());
+        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
         $blogPost->postuserid = $blogUser->userid;
 
 
@@ -213,7 +237,7 @@ class UsersController extends BaseController {
             $this->view->setData("errorMessages",$errorMessages);
             $this->view->setData("blogPost", $blogPost);
             $this->view->setData("blogUser", $blogUser);
-            $this->view->setData("username", $this->getLoggedInUsername());
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
             
             $this->view->setHeaderFile("views/userheader.php");
             $this->view->setContentFile(($formType == 'edit') ? "views/users/usereditarticle.php" : "views/users/usernewarticle.php");
@@ -236,7 +260,7 @@ class UsersController extends BaseController {
 
     public function usereditarticle() {
 
-        if (!($this->isLoggedIn())) {
+        if (!($this->sessionUtility->isLoggedIn())) {
             $this->login();
             return;
         }
@@ -246,7 +270,7 @@ class UsersController extends BaseController {
             return;
         }
 
-        $id = $this->test_input($_GET['id']);
+        $id = $this->filterInput($_GET['id']);
 
         $blogPost = $this->blogPostDatabase->getPost($_GET['id']);
 
@@ -255,7 +279,7 @@ class UsersController extends BaseController {
             return;
         }
         //$buser = $this->bloguserdbobj->getUserById($bpost->postuserid);            
-        $this->view->setData("username", $this->getLoggedInUsername());
+        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
         $this->view->setData("blogPost",$blogPost);
         $this->view->setHeaderFile("views/userheader.php");
         $this->view->setContentFile("views/users/usereditarticle.php");
@@ -264,9 +288,8 @@ class UsersController extends BaseController {
     }
 
     public function logout() {
-        if ($this->isLoggedIn()) {
-            $this->endSession();
-            //echo "<br /> User logged out";
+        if ($this->sessionUtility->isLoggedIn()) {
+            $this->sessionUtility->endSession();
             $logoutMessage = "You have successfully logged out of your acccount.";
             $this->view->setData("logoutMessage",$logoutMessage);
         }
@@ -282,7 +305,7 @@ class UsersController extends BaseController {
     }
 
     public function userdeletearticle() {
-        if (!$this->isLoggedIn()) {
+        if (!$this->sessionUtility->isLoggedIn()) {
             $this->login();
             return;
         }
@@ -293,7 +316,7 @@ class UsersController extends BaseController {
         }
 
 
-        $id = $this->test_input($_GET['id']);
+        $id = $this->filterInput($_GET['id']);
         $blogPost = $this->blogPostDatabase->getPost($id);
 
         if (!$blogPost) {
@@ -308,7 +331,7 @@ class UsersController extends BaseController {
 
     public function userprofile() {
 
-        if (!$this->isLoggedIn()) {
+        if (!$this->sessionUtility->isLoggedIn()) {
             $this->login();
             return;
         }
@@ -320,9 +343,9 @@ class UsersController extends BaseController {
             // get the details of current user to pre-fill the profile form
 
 
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->getLoggedInUsername());
+        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
             
-            $this->view->setData("username", $this->getLoggedInUsername());
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
             $this->view->setData("blogUser",$blogUser);
             $this->view->setHeaderFile("views/userheader.php");
             $this->view->setContentFile("views/users/userprofile.php");
@@ -331,7 +354,7 @@ class UsersController extends BaseController {
             return;
         }
 
-        $blogUser->username = $this->getLoggedInUsername();
+        $blogUser->username = $this->sessionUtility->getLoggedInUsername();
 
         $userProfileValidator = new userProfileValidator();
 
@@ -339,7 +362,7 @@ class UsersController extends BaseController {
 
        
         if (!empty($errorMessages)) {
-            $this->view->setData("username",$this->getLoggedInUsername());
+            $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
             $this->view->setData("errorMessages",$errorMessages);
             $this->view->setData("blogUser", $blogUser);
             $this->view->setHeaderFile("views/userheader.php");
@@ -354,13 +377,13 @@ class UsersController extends BaseController {
     }
 
     public function userpassword() {
-        if (!$this->isLoggedIn()) {
+        if (!$this->sessionUtility->isLoggedIn()) {
             $this->login();
             return;
         }
         
             if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-                $this->view->setData("username",$this->getLoggedInUsername());
+                $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
                 $this->view->setHeaderFile("views/userheader.php");
                 $this->view->setContentFile("views/users/userpassword.php");
                 $this->view->renderView();
@@ -373,14 +396,14 @@ class UsersController extends BaseController {
                 if (empty($_POST['txtuserpasswordcurrent'])) {
                     $errorMessages[] = "Please enter your current password.";
                 } else {
-                    $userpasswordcurrent = sha1($this->test_input($_POST['txtuserpasswordcurrent']));
+                    $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
                 }
 
                 if (empty($_POST['txtuserpasswordnew1']) || empty($_POST['txtuserpasswordnew2'])) {
                     $errorMessages[] = "Please enter both your new and confirmed passwords.";
                 } else {
-                    $userpasswordnew1 = sha1($this->test_input($_POST['txtuserpasswordnew1']));
-                    $userpasswordnew2 = sha1($this->test_input($_POST['txtuserpasswordnew2']));
+                    $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
+                    $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
 
                     if ($userpasswordnew1 != $userpasswordnew2) {
                         $errorMessages[] = "Your new and confirmed passwords do not match.";
@@ -389,7 +412,7 @@ class UsersController extends BaseController {
                     }
                 }
 
-                $username = $this->getLoggedInUsername();
+                $username = $this->sessionUtility->getLoggedInUsername();
                 if (empty($errorMessages) &&
                         $this->blogUserDatabase->authenticateUser($username, $userpasswordcurrent)) {
                     $result = $this->blogUserDatabase->updatePassword($username, $userpassword);
@@ -404,13 +427,23 @@ class UsersController extends BaseController {
                     //echo "The current password entered is not valid.";
                 }
             
-                $this->view->setData("username",$this->getLoggedInUsername());
+                $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
                 $this->view->setData("errorMessages",$errorMessages);
                 $this->view->setHeaderFile("views/userheader.php");
                 $this->view->setContentFile("views/users/userpassword.php");
                 $this->view->renderView();
       
     }
+
+    protected function filterInput($data) {
+
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+
+        return $data;
+    }
+
 
 }
 

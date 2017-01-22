@@ -70,7 +70,7 @@ class UserPostValidator extends Validator{
             if (empty($userPostForm['txtpostid'])) {
                 $errorMessages[] = "Please enter the Article Id";
             } else {
-                $blogPost->postid = $this->test_input($userPostForm['txtpostid']);
+                $blogPost->postid = $this->filterInput($userPostForm['txtpostid']);
             }
         }
 
