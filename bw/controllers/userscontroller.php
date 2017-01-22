@@ -15,7 +15,8 @@ use BW\validators\UserRegistrationValidator;
 use BW\validators\userProfileValidator;
 use BW\validators\userPostValidator;
 
-class UsersController extends BaseController {
+class UsersController {
+    use filterInputTrait;
 
     protected $blogPostDatabase;
     protected $blogUserDatabase;
@@ -434,16 +435,6 @@ class UsersController extends BaseController {
                 $this->view->renderView();
       
     }
-
-    protected function filterInput($data) {
-
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-
-        return $data;
-    }
-
 
 }
 

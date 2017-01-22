@@ -3,7 +3,7 @@
 namespace BW\controllers;
 
 
-class BaseController {
+trait FilterInputTrait {
     
     protected function filterInput($data) {
 
