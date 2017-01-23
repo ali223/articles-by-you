@@ -1,9 +1,11 @@
 <?php
 
-namespace BW;
+//namespace BW;
 
 
-spl_autoload_register();
+//spl_autoload_register();
+
+require "vendor/autoload.php";
 
 
 

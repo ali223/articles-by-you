@@ -16,7 +16,7 @@ use BW\validators\userProfileValidator;
 use BW\validators\userPostValidator;
 
 class UsersController {
-    use filterInputTrait;
+    use FilterInputTrait;
 
     protected $blogPostDatabase;
     protected $blogUserDatabase;
