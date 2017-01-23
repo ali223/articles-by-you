@@ -2,18 +2,18 @@
 
 namespace BW\controllers;
 
-use BW\tools\bloguser;
-use BW\tools\blogpost;
-use BW\tools\blogcomment;
+use BW\tools\BlogUser;
+use BW\tools\BlogPost;
+use BW\tools\BlogComment;
 
 
-use BW\tools\bloguserdb;
-use BW\tools\blogpostdb;
-use BW\tools\blogcommentdb;
+use BW\tools\BlogUserDB;
+use BW\tools\BlogPostDB;
+use BW\tools\BlogCommentDB;
 
 use BW\validators\UserRegistrationValidator;
-use BW\validators\userProfileValidator;
-use BW\validators\userPostValidator;
+use BW\validators\UserProfileValidator;
+use BW\validators\UserPostValidator;
 
 class UsersController {
     use FilterInputTrait;
@@ -24,7 +24,7 @@ class UsersController {
     protected $view;
     protected $sessionUtility;
     
-    public function __construct(bloguserdb $blogUserDatabase, blogpostdb $blogPostDatabase, blogcommentdb $blogCommentDatabase, View $view, SessionUtility $sessionUtility) {
+    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, BlogCommentDB $blogCommentDatabase, View $view, SessionUtility $sessionUtility) {
              
 
         $this->blogPostDatabase = $blogPostDatabase;
@@ -60,7 +60,7 @@ class UsersController {
 
         $errorMessages = [];
 
-        $blogUser = new bloguser();
+        $blogUser = new BlogUser();
 
         $userRegistrationValidator = new UserRegistrationValidator();
 
@@ -216,7 +216,7 @@ class UsersController {
          $formType = isset($_POST['formtype']) ? $this->filterInput($_POST['formtype']) : '';
 
 
-        $blogPost = new blogpost();
+        $blogPost = new BlogPost();
 
         $userPostValidator = new UserPostValidator();
 
@@ -334,7 +334,7 @@ class UsersController {
         }
 
         //echo "profile updated";
-        $blogUser = new \BW\tools\bloguser();
+        $blogUser = new \BW\tools\BlogUser();
         //echo "user profile";
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             // get the details of current user to pre-fill the profile form

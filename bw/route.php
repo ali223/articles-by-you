@@ -50,12 +50,12 @@ class Route{
 
 	          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
 	          
-	          $blogPostDatabase = new tools\blogpostdb($database);
+	          $blogPostDatabase = new tools\BlogPostDB($database);
 
-	          $blogUserDatabase = new tools\bloguserdb($database);
+	          $blogUserDatabase = new tools\BlogUserDB($database);
 
 
-	          $blogCommentDatabase = new tools\blogcommentdb($database);
+	          $blogCommentDatabase = new tools\BlogCommentDB($database);
 	          
 	          $view = new controllers\View("views/header.php", '', "views/footer.php");
 
@@ -69,11 +69,11 @@ class Route{
 
 	          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
 	          
-	          $blogPostDatabase = new tools\blogpostdb($database);
+	          $blogPostDatabase = new tools\BlogPostDB($database);
 
-	          $blogUserDatabase = new tools\bloguserdb($database);
+	          $blogUserDatabase = new tools\BlogUserDB($database);
 
-	          $blogCommentDatabase = new tools\blogcommentdb($database);
+	          $blogCommentDatabase = new tools\BlogCommentDB($database);
 	          
 	          $view = new controllers\View("views/header.php", '', "views/footer.php");
 
@@ -92,8 +92,8 @@ class Route{
 
 				if(! method_exists($controller, $action)) {
 
-					throw new Exception(
-						"{$controller} does not respond to the {$action} action."
+					throw new \Exception(
+						"method not found"
 					);
 
 				}

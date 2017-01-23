@@ -2,14 +2,14 @@
 
 namespace BW\validators;
 
-use BW\tools\bloguser;
-use BW\tools\bloguserdb;
+use BW\tools\BlogUser;
+use BW\tools\BlogUserDB;
 
 
 class UserRegistrationValidator extends Validator{
 
 
-    public function validateUserForm(Array $userForm,  bloguser $blogUser, bloguserdb $blogUserDatabase) {   
+    public function validateUserForm(Array $userForm,  BlogUser $blogUser, BlogUserDB $blogUserDatabase) {   
 
         $errorMessages = [];
 

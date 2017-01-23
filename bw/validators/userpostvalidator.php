@@ -2,14 +2,14 @@
 
 namespace BW\validators;
 
-use BW\tools\blogpost;
-use BW\tools\blogpostdb;
+use BW\tools\BlogPost;
+use BW\tools\BlogPostDB;
 
 
 class UserPostValidator extends Validator{
 
    
-    public function validatePostForm(Array $userPostForm,  blogpost $blogPost, Array $userPostImageFile = [], $formType = null) {   
+    public function validatePostForm(Array $userPostForm,  BlogPost $blogPost, Array $userPostImageFile = [], $formType = null) {   
 
         $errorMessages = [];
 

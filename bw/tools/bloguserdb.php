@@ -6,9 +6,7 @@ namespace BW\tools;
 
 
 
-class bloguserdb {
-
-
+class BlogUserDB {
 
 private $mydb;
 
@@ -69,7 +67,7 @@ private $mydb;
              
                       
     }
-     public function addUser(bloguser $user) {
+     public function addUser(BlogUser $user) {
 
              // echo "<pre>", print_r($user), "</pre>";
          try{
@@ -116,7 +114,7 @@ private $mydb;
 
        $row = $stmt->fetch();
 
-            $buser = new bloguser();
+            $buser = new BlogUser();
 
             $buser->userid = self::filter($row['userid']);
 
@@ -178,7 +176,7 @@ private $mydb;
 
        $row = $stmt->fetch();
 
-            $buser = new bloguser();
+            $buser = new BlogUser();
 
             $buser->userid = self::filter($row['userid']);
             
@@ -217,7 +215,7 @@ private $mydb;
      }
      
      
-     public function updateUser(bloguser $user) {
+     public function updateUser(BlogUser $user) {
 
              // echo "<pre>", print_r($user), "</pre>";
          try{
