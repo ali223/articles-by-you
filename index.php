@@ -1,13 +1,5 @@
 <?php
-
-//namespace BW;
-
-
-//spl_autoload_register();
-
 require "vendor/autoload.php";
-
-
 
 $routes = require 'configroutes.php';
 
@@ -16,5 +8,3 @@ $routes = require 'configroutes.php';
         );
 
 $routes->direct($uri);
-
-

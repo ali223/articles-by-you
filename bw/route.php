@@ -1,25 +1,26 @@
 <?php
 namespace BW;
-use BW\controllers\PostsController;
 
+use Exception;
+use BW\controllers\PostsController;
+use BW\controllers\UsersController;
 use BW\controllers\SessionUtility;
+use BW\controllers\PagesController;
+use BW\controllers\View;
+use BW\tools\Database;
+use BW\tools\BlogPostDB;
+use BW\tools\BlogUserDB;
+use BW\tools\BlogCommentDB;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
-
 
 class Route{
 
 	public function add($uri, $controllerName ) {
-
 		$this->routes[$uri] = $controllerName;
 	}
 
-
 	public function direct($uri){
-
-
-
-	
 		if(array_key_exists($uri, $this->routes)) {
 
 			$controller = explode('@', $this->routes[$uri])[0];
@@ -33,73 +34,48 @@ class Route{
 
 	protected function callAction($controller, $action) {
 
-
 		switch($controller) {
 
 	      case 'PagesController':
-
-	          $view = new controllers\View("views/header.php", '', "views/footer.php");
-
+	          $view = new View("views/header.php", '', "views/footer.php");
 	          $sessionUtility = new sessionUtility();
-
-	          $controller = new controllers\PagesController($view, $sessionUtility);
-
+	          $controller = new PagesController($view, $sessionUtility);
 	          break;
 
 	      case 'PostsController':
-
-	          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
+	          $database = new Database(DB_DSN, DB_USER, DB_PASSWORD);
 	          
-	          $blogPostDatabase = new tools\BlogPostDB($database);
-
-	          $blogUserDatabase = new tools\BlogUserDB($database);
-
-
-	          $blogCommentDatabase = new tools\BlogCommentDB($database);
+	          $blogPostDatabase = new BlogPostDB($database);
+	          $blogUserDatabase = new BlogUserDB($database);
+	          $blogCommentDatabase = new BlogCommentDB($database);
 	          
-	          $view = new controllers\View("views/header.php", '', "views/footer.php");
+	          $view = new View("views/header.php", '', "views/footer.php");
 
-
-	          $controller = new controllers\PostsController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view);
+	          $controller = new PostsController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view);
 
 	           break;
 
-
          case 'UsersController':
 
-	          $database = new tools\Database(DB_DSN, DB_USER, DB_PASSWORD);
+	          $database = new Database(DB_DSN, DB_USER, DB_PASSWORD);
 	          
-	          $blogPostDatabase = new tools\BlogPostDB($database);
-
-	          $blogUserDatabase = new tools\BlogUserDB($database);
-
-	          $blogCommentDatabase = new tools\BlogCommentDB($database);
-	          
-	          $view = new controllers\View("views/header.php", '', "views/footer.php");
+	          $blogPostDatabase = new BlogPostDB($database);
+	          $blogUserDatabase = new BlogUserDB($database);
+	          $blogCommentDatabase = new BlogCommentDB($database);
+	  
+	          $view = new View("views/header.php", '', "views/footer.php");
 
 	          $sessionUtility = new sessionUtility();
 
+	          $controller = new UsersController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view, $sessionUtility);
 
-
-	         $controller = new controllers\UsersController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view, $sessionUtility);
-
-	         break;
-
-
+	           break;
 	        }	
-	//	$controller = '\\BW\\controllers\\' . $controller;
-
-
-				if(! method_exists($controller, $action)) {
-
-					throw new \Exception(
-						"method not found"
-					);
-
-				}
-
-				return $controller->$action();
-
+	
+			if(! method_exists($controller, $action)) {
+				throw new Exception("method not found");
+			}
+			return $controller->$action();
 	}
 	
 }
