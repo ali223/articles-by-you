@@ -88,21 +88,11 @@ class BlogUserDB {
 
         $stmt->setFetchMode(\PDO::FETCH_ASSOC);
 
-            $row = $stmt->fetch();
+        $row = $stmt->fetch();
 
-            $blogUser = new BlogUser();
+        $blogUser = $this->createBlogUserObjectFromArray($row);
 
-            $blogUser->userId = $this->filterInput($row['userid']);
-            $blogUser->userName = $this->filterInput($row['username']);
-            $blogUser->userFirstName = $this->filterInput($row['userfirstname']);
-            $blogUser->userLastName = $this->filterInput($row['userlastname']);
-            $blogUser->userType = $this->filterInput($row['usertype']);
-            $blogUser->userUrl = $this->filterInput($row['userurl']);            
-            $blogUser->userEmail = $this->filterInput($row['useremail']);            
-            $blogUser->userRegDate = $this->filterInput($row['userregdate']);            
-            $blogUser->userPhoto =$this->filterInput($row['userphoto']);           
-            
-          return $blogUser;
+        return $blogUser;
 
       }catch(PDOException $pe) {
              error_log("<br /> Error occurred " . $pe->getMessage());
@@ -126,19 +116,9 @@ class BlogUserDB {
    
             $row = $stmt->fetch();
 
-            $blogUser = new BlogUser();
-
-            $blogUser->userId = $this->filterInput($row['userid']);
-            $blogUser->userName = $this->filterInput($row['username']);
-            $blogUser->userFirstName = $this->filterInput($row['userfirstname']);
-            $blogUser->userLastName = $this->filterInput($row['userlastname']);
-            $blogUser->userType = $this->filterInput($row['usertype']);
-            $blogUser->userUrl = $this->filterInput($row['userurl']);            
-            $blogUser->userEmail = $this->filterInput($row['useremail']);            
-            $blogUser->userRegDate = $this->filterInput($row['userregdate']);            
-            $blogUser->userPhoto =$this->filterInput($row['userphoto']);  
-
+            $blogUser = $this->createBlogUserObjectFromArray($row);
             return $blogUser;
+
       }catch(PDOException $pe) {
              error_log("<br /> Error occurred " . $pe->getMessage());
       }
@@ -166,7 +146,7 @@ class BlogUserDB {
            
      }
  
- public function updatePassword($username, $userpassword) {
+  public function updatePassword($username, $userpassword) {
 
          try{
            $stmt = $this->mydb->prepare("update blog_users "
@@ -182,5 +162,22 @@ class BlogUserDB {
              error_log("<br /> error occurred " . $pe->getMessage());
              return false;
          } 
-     }
+    }
+
+    protected function createBlogUserObjectFromArray(Array $userArray) {
+          $blogUser = new BlogUser();
+       
+          $blogUser->userId = $this->filterInput($userArray['userid']);
+          $blogUser->userName = $this->filterInput($userArray['username']);
+          $blogUser->userFirstName = $this->filterInput($userArray['userfirstname']);
+          $blogUser->userLastName = $this->filterInput($userArray['userlastname']);
+          $blogUser->userType = $this->filterInput($userArray['usertype']);
+          $blogUser->userUrl = $this->filterInput($userArray['userurl']);            
+          $blogUser->userEmail = $this->filterInput($userArray['useremail']);            
+          $blogUser->userRegDate = $this->filterInput($userArray['userregdate']);            
+          $blogUser->userPhoto =$this->filterInput($userArray['userphoto']);           
+
+          return $blogUser;
+
+    }
 }
