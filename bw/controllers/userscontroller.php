@@ -5,8 +5,6 @@ namespace BW\controllers;
 use BW\tools\BlogUser;
 use BW\tools\BlogPost;
 use BW\tools\BlogComment;
-
-
 use BW\tools\BlogUserDB;
 use BW\tools\BlogPostDB;
 use BW\tools\BlogCommentDB;
@@ -14,6 +12,8 @@ use BW\tools\BlogCommentDB;
 use BW\validators\UserRegistrationValidator;
 use BW\validators\UserProfileValidator;
 use BW\validators\UserPostValidator;
+use BW\validators\FilterInputTrait;
+
 
 class UsersController {
     use FilterInputTrait;
@@ -49,9 +49,6 @@ class UsersController {
 
     public function create() {
 
-        // echo "<br /> user create called";
-        // echo "<pre>", print_r($_POST), "</pre>";
-
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             $this->userRegistrationForm();
             return;
@@ -65,7 +62,6 @@ class UsersController {
         $userRegistrationValidator = new UserRegistrationValidator();
 
         $errorMessages = $userRegistrationValidator->validateUserForm($_POST, $blogUser, $this->blogUserDatabase);        
-
 
       
         if ($errorMessages) {
@@ -181,7 +177,7 @@ class UsersController {
             return;
         }
 
-        $blogUser = $this->blogUserDatabase->getUserById($blogPost->postuserid);
+        $blogUser = $this->blogUserDatabase->getUserById($blogPost->postUserId);
 
         
         $this->view->setData("blogPost", $blogPost);
@@ -215,7 +211,6 @@ class UsersController {
 
          $formType = isset($_POST['formtype']) ? $this->filterInput($_POST['formtype']) : '';
 
-
         $blogPost = new BlogPost();
 
         $userPostValidator = new UserPostValidator();
@@ -225,11 +220,8 @@ class UsersController {
         
         // get the currently logged in user's user id and store it in the new post data
         $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
-        $blogPost->postuserid = $blogUser->userid;
-
-
+        $blogPost->postUserId = $blogUser->userId;
        
-        //echo "<pre>", print_r($blogpostobj), "</pre>";
         if (!empty($errorMessages)) {
             $this->view->setData("errorMessages",$errorMessages);
             $this->view->setData("blogPost", $blogPost);
@@ -244,12 +236,12 @@ class UsersController {
 
 
         if ($formType == "new") {
-            $blogPost->postreads = 0;
+            $blogPost->postReads = 0;
             $this->blogPostDatabase->addPost($blogPost);
-            $successMessage = "Your New Article titled $blogPost->posttitle has been created successfully";
+            $successMessage = "Your New Article titled $blogPost->postTitle has been created successfully";
         } elseif ($formType == "edit") {
             $this->blogPostDatabase->updatePost($blogPost);
-            $successMessage = "Your Article titled $blogPost->posttitle has been updated successfully";
+            $successMessage = "Your Article titled $blogPost->postTitle has been updated successfully";
         }
 
         $this->userhome($successMessage);
@@ -322,7 +314,7 @@ class UsersController {
         }
 
         $this->blogPostDatabase->deletePost($id);
-        $successMessage = "Your Article titled $blogPost->posttitle has been deleted successfully";
+        $successMessage = "Your Article titled $blogPost->postTitle has been deleted successfully";
         $this->userhome($successMessage);
     }
 
@@ -334,7 +326,7 @@ class UsersController {
         }
 
         //echo "profile updated";
-        $blogUser = new \BW\tools\BlogUser();
+        $blogUser = new BlogUser();
         //echo "user profile";
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             // get the details of current user to pre-fill the profile form
@@ -351,7 +343,7 @@ class UsersController {
             return;
         }
 
-        $blogUser->username = $this->sessionUtility->getLoggedInUsername();
+        $blogUser->userName = $this->sessionUtility->getLoggedInUsername();
 
         $userProfileValidator = new userProfileValidator();
 

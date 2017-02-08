@@ -6,7 +6,9 @@ use BW\tools\BlogUser;
 use BW\tools\BlogUserDB;
 
 
-class UserProfileValidator extends Validator{
+class UserProfileValidator{
+    use FilterInputTrait;
+
 
    
     public function validateProfileForm(Array $userForm,  BlogUser $blogUser) {   
@@ -18,8 +20,8 @@ class UserProfileValidator extends Validator{
             $errorMessages[] = "First Name is required";
         } else {
 
-            $blogUser->userfirstname = $this->filterInput($userForm['txtuserfirstname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userfirstname)) {
+            $blogUser->userFirstName = $this->filterInput($userForm['txtuserfirstname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userFirstName)) {
                 $errorMessages[] = "First Name : Only letters and white space allowed";
             }
         }
@@ -31,16 +33,16 @@ class UserProfileValidator extends Validator{
             $errorMessages[] = "Last Name is required";
         } else {
 
-            $blogUser->userlastname = $this->filterInput($userForm['txtuserlastname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userlastname)) {
+            $blogUser->userLastName = $this->filterInput($userForm['txtuserlastname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userLastName)) {
                 $errorMessages[] = "Last Name : Only letters and white space allowed";
             }
         }
 
 
 
-        $blogUser->userurl = $this->filterInput($userForm['txtuserurl']);
-        if (!filter_var($blogUser->userurl, FILTER_VALIDATE_URL)) {
+        $blogUser->userUrl = $this->filterInput($userForm['txtuserurl']);
+        if (!filter_var($blogUser->userUrl, FILTER_VALIDATE_URL)) {
             $errorMessages[] = "Please provide your website address in correct format e.g. (http://www.example.com)";
         }
 
@@ -49,8 +51,8 @@ class UserProfileValidator extends Validator{
             $errorMessages[] = "Email is required";
         } else {
 
-            $blogUser->useremail = $this->filterInput($userForm['txtuseremail']);
-            if (!filter_var($blogUser->useremail, FILTER_VALIDATE_EMAIL)) {
+            $blogUser->userEmail = $this->filterInput($userForm['txtuseremail']);
+            if (!filter_var($blogUser->userEmail, FILTER_VALIDATE_EMAIL)) {
                 $errorMessages[] = "Please provide email address in correct format.";
             }
         }

@@ -4,53 +4,31 @@ namespace BW\tools;
 
  class BlogUser{
 
-    public $userid;
-
-    public $username;
-
-    public $userfirstname;
-
-    public $userlastname;
-
-    public $usertype;
-
-    public $userurl;
-
-    public $useremail;
-
-    public $userregdate;
-
-    public $userphoto;
-
-    public $userpassword;
+    public $userId;
+    public $userName;
+    public $userFirstName;
+    public $userLastName;
+    public $userType;
+    public $userUrl;
+    public $userEmail;
+    public $userRegDate;
+    public $userPhoto;
+    public $userPassword;
 
     
 
-    public function __construct($id=null, $name=null, $firstname=null, $lastname=null, $type=null, $url=null, $email=null, $regdate=null, $photo=null, $password=null) {
+    public function __construct($id=null, $name=null, $firstName=null, $lastName=null, $type=null, $url=null, $email=null, $regDate=null, $photo=null, $password=null) {
 
-        $this->userid = $id;
-
-        $this->username= $name;
-
-        $this->userfirstname= $firstname;
-
-        $this->userlastname= $lastname;
-
-        $this->usertype= $type;
-
-        $this->userurl= $url;
-
-        $this->useremail= $email;
-
-        $this->userregdate= $regdate;
-
-        $this->userphoto= $photo;
-
-        $this->userpassword = $password;
-
+        $this->userId = $id;
+        $this->userName= $name;
+        $this->userFirstName= $firstName;
+        $this->userLastName= $lastName;
+        $this->userType= $type;
+        $this->userUrl= $url;
+        $this->userEmail= $email;
+        $this->userRegDate= $regDate;
+        $this->userPhoto= $photo;
+        $this->userPassword = $password;
     }
 
 }
-
-
-

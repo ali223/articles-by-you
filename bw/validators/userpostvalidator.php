@@ -6,7 +6,9 @@ use BW\tools\BlogPost;
 use BW\tools\BlogPostDB;
 
 
-class UserPostValidator extends Validator{
+class UserPostValidator {
+    use FilterInputTrait;
+
 
    
     public function validatePostForm(Array $userPostForm,  BlogPost $blogPost, Array $userPostImageFile = [], $formType = null) {   
@@ -17,29 +19,29 @@ class UserPostValidator extends Validator{
        if (empty($userPostForm['txtposttitle'])) {
             $errorMessages[] = "Please enter the Article Title";
         } else {
-            $blogPost->posttitle = $this->filterInput($userPostForm['txtposttitle']);
+            $blogPost->postTitle = $this->filterInput($userPostForm['txtposttitle']);
         }
 
         if (empty($userPostForm['txtpostdesc'])) {
             $errorMessages[] = "Please enter the Article Description";
         } else {
-            $blogPost->postdesc = $this->filterInput($userPostForm['txtpostdesc']);
+            $blogPost->postDesc = $this->filterInput($userPostForm['txtpostdesc']);
         }
 
         if (empty($userPostForm['txtposttext'])) {
             $errorMessages[] = "Please enter the Article Text";
         } else {
-            $blogPost->posttext = $this->filterInput($userPostForm['txtposttext']);
+            $blogPost->postText = $this->filterInput($userPostForm['txtposttext']);
         }
 
         if ($userPostForm['txtpostisvisible'] == '') {
             $errorMessages[] = "Please enter the if the Article is a Draft or to be published";
         } else {
-            $blogPost->postisvisible = $this->filterInput($userPostForm['txtpostisvisible']);
+            $blogPost->postIsVisible = $this->filterInput($userPostForm['txtpostisvisible']);
         }
 
         // store the current date and time as the postdate
-        $blogPost->postdate = time();
+        $blogPost->postDate = time();
 
 
          $uploadok = 0;
@@ -54,7 +56,7 @@ class UserPostValidator extends Validator{
             if ($check !== false) {
                 //echo "file is an image";
                 move_uploaded_file($userPostImageFile['txtpostimage']['tmp_name'], $targetfile);
-                $blogPost->postimage = $targetfile;
+                $blogPost->postImage = $targetfile;
             } else {
                 $errorMessages[] = "The uploaded file is not an image";
             }
@@ -70,7 +72,7 @@ class UserPostValidator extends Validator{
             if (empty($userPostForm['txtpostid'])) {
                 $errorMessages[] = "Please enter the Article Id";
             } else {
-                $blogPost->postid = $this->filterInput($userPostForm['txtpostid']);
+                $blogPost->postId = $this->filterInput($userPostForm['txtpostid']);
             }
         }
 

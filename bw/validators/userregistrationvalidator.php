@@ -6,7 +6,9 @@ use BW\tools\BlogUser;
 use BW\tools\BlogUserDB;
 
 
-class UserRegistrationValidator extends Validator{
+class UserRegistrationValidator {
+    use FilterInputTrait;
+
 
 
     public function validateUserForm(Array $userForm,  BlogUser $blogUser, BlogUserDB $blogUserDatabase) {   
@@ -18,9 +20,9 @@ class UserRegistrationValidator extends Validator{
             $errorMessages[] = "User Name is required";
         } else {
 
-            $blogUser->username = $this->filterInput($userForm['txtusername']);
+            $blogUser->userName = $this->filterInput($userForm['txtusername']);
 
-            if (!preg_match("/^[a-z]+\d*$/", $blogUser->username)) {
+            if (!preg_match("/^[a-z]+\d*$/", $blogUser->userName)) {
                 $errorMessages[] = "User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233";
             }
         }
@@ -32,8 +34,8 @@ class UserRegistrationValidator extends Validator{
             $errorMessages[] = "First Name is required";
         } else {
 
-            $blogUser->userfirstname = $this->filterInput($userForm['txtuserfirstname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userfirstname)) {
+            $blogUser->userFirstName = $this->filterInput($userForm['txtuserfirstname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userFirstName)) {
                 $er_POSTrorMessages[] = "First Name : Only letters and white space allowed";
             }
         }
@@ -45,17 +47,17 @@ class UserRegistrationValidator extends Validator{
             $errorMessages[] = "Last Name is required";
         } else {
 
-            $blogUser->userlastname = $this->filterInput($userForm['txtuserlastname']);
-            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userlastname)) {
+            $blogUser->userLastName = $this->filterInput($userForm['txtuserlastname']);
+            if (!preg_match("/^[a-zA-Z ]*$/", $blogUser->userLastName)) {
                 $errorMessages[] = "Last Name : Only letters and white space allowed";
             }
         }
 
 
 
-        $blogUser->userurl = $this->filterInput($userForm['txtuserurl']);
+        $blogUser->userUrl = $this->filterInput($userForm['txtuserurl']);
 
-        if (!filter_var($blogUser->userurl, FILTER_VALIDATE_URL)) {
+        if (!filter_var($blogUser->userUrl, FILTER_VALIDATE_URL)) {
             $errorMessages[] = "Please provide your website address in correct format e.g. (http://www.example.com)";
         }
 
@@ -64,8 +66,8 @@ class UserRegistrationValidator extends Validator{
             $errorMessages[] = "Email is required";
         } else {
 
-            $blogUser->useremail = $this->filterInput($userForm['txtuseremail']);
-            if (!filter_var($blogUser->useremail, FILTER_VALIDATE_EMAIL)) {
+            $blogUser->userEmail = $this->filterInput($userForm['txtuseremail']);
+            if (!filter_var($blogUser->userEmail, FILTER_VALIDATE_EMAIL)) {
                 $errorMessages[] = "Please provide email address in correct format.";
             }
         }
@@ -79,16 +81,16 @@ class UserRegistrationValidator extends Validator{
             if (!($userForm['txtuserpassword'] == $userForm['txtuserpassword2'])) {
                 $errorMessages[] = "Please make sure that your chosen password and re-entered password match.";
             } else {
-                $blogUser->userpassword = sha1($this->filterInput($userForm['txtuserpassword']));
+                $blogUser->userPassword = sha1($this->filterInput($userForm['txtuserpassword']));
             }
         }
 
-        if ($blogUserDatabase->userExists($blogUser->username)) {
-            $errorMessages[] = "The User Name $blogUser->username alreadys exists. Please choose a different user name.";
+        if ($blogUserDatabase->userExists($blogUser->userName)) {
+            $errorMessages[] = "The User Name $blogUser->userName alreadys exists. Please choose a different user name.";
         }
 
 
-        $blogUser->userregdate = time();
+        $blogUser->userRegDate = time();
 
         return $errorMessages;
     }
