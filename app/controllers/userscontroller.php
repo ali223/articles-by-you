@@ -13,6 +13,7 @@ use app\validators\UserRegistrationValidator;
 use app\validators\UserProfileValidator;
 use app\validators\UserPostValidator;
 use app\validators\FilterInputTrait;
+use app\validators\FormValidator;
 
 
 class UsersController {
@@ -54,16 +55,37 @@ class UsersController {
             return;
         }
 
-
         $errorMessages = [];
 
-        $blogUser = new BlogUser();
+        $validator = new FormValidator($_POST);
 
-        $userRegistrationValidator = new UserRegistrationValidator();
+        $validator
+            ->validateRequireds([
+                'txtusername' => 'User Name is required',
+                'txtuserpassword' => 'Password is required',
+                'txtuserpassword2' => 'Re-enter Password is required',
+                'txtuserfirstname' => 'First Name is required',
+                'txtuserlastname' => 'Last Name is required',
+                'txtuseremail' => 'Email Address is required'
+            ])
+            ->validateMatches(
+                ['txtuserpassword', 'txtuserpassword2'], 
+                'Passwords must match'
+            )
+            ->validateEmail('txtuseremail')
+            ->validateAlphaNumeric('txtusername',
+                        'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
+            ->validateURL('txtuserurl');
 
-        $errorMessages = $userRegistrationValidator->validateUserForm($_POST, $blogUser, $this->blogUserDatabase);        
+        $blogUser = $this->createBlogUserFromPostData($_POST);
 
-      
+        $errorMessages = $validator->getValidationErrors();
+
+        if ($this->blogUserDatabase->userExists($blogUser->userName)) {
+            $errorMessages[] = "The User Name $blogUser->userName alreadys exists. Please choose a different user name.";
+        }
+
+           
         if ($errorMessages) {
 
            $this->view->setData("blogUser",$blogUser);
@@ -75,6 +97,8 @@ class UsersController {
             return;
         }
 
+        
+
         if ($this->blogUserDatabase->addUser($blogUser)) {
             $this->view->setData("blogUser",$blogUser);
             $this->view->setData("errorMessages", $errorMessages);
@@ -84,6 +108,28 @@ class UsersController {
             return;
  
         }
+
+    }
+
+    public function createBlogUserFromPostData($postData)
+    {
+        $blogUser = new BlogUser();
+
+        $blogUser->userName = $this->filterInput($postData['txtusername']);
+
+        $blogUser->userFirstName = $this->filterInput($postData['txtuserfirstname']);
+       
+        $blogUser->userLastName = $this->filterInput($postData['txtuserlastname']);
+
+        $blogUser->userUrl = $this->filterInput($postData['txtuserurl']);
+
+        $blogUser->userEmail = $this->filterInput($postData['txtuseremail']);
+
+        $blogUser->userPassword = $this->filterInput($postData['txtuserpassword']);
+
+        $blogUser->userRegDate = time();
+
+        return $blogUser;
 
     }
 
