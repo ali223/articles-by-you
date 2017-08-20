@@ -55,27 +55,7 @@ class UsersController {
             return;
         }
 
-        $errorMessages = [];
-
-        $validator = new FormValidator($_POST);
-
-        $validator
-            ->validateRequireds([
-                'txtusername' => 'User Name is required',
-                'txtuserpassword' => 'Password is required',
-                'txtuserpassword2' => 'Re-enter Password is required',
-                'txtuserfirstname' => 'First Name is required',
-                'txtuserlastname' => 'Last Name is required',
-                'txtuseremail' => 'Email Address is required'
-            ])
-            ->validateMatches(
-                ['txtuserpassword', 'txtuserpassword2'], 
-                'Passwords must match'
-            )
-            ->validateEmail('txtuseremail')
-            ->validateAlphaNumeric('txtusername',
-                        'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
-            ->validateURL('txtuserurl');
+        $validator = $this->validateUserForm($_POST);
 
         $blogUser = $this->createBlogUserFromPostData($_POST);
 
@@ -93,11 +73,8 @@ class UsersController {
            $this->view->setContentFile("views/users/regform.php");
            $this->view->renderView();
 
-           
-            return;
-        }
-
-        
+           return;
+        }      
 
         if ($this->blogUserDatabase->addUser($blogUser)) {
             $this->view->setData("blogUser",$blogUser);
@@ -106,12 +83,33 @@ class UsersController {
             $this->view->renderView();
 
             return;
- 
         }
 
     }
 
-    public function createBlogUserFromPostData($postData)
+    protected function validateUserForm($postData)
+    {
+        return (new FormValidator($postData))
+            ->validateRequireds([
+                'txtusername' => 'User Name is required',
+                'txtuserpassword' => 'Password is required',
+                'txtuserpassword2' => 'Re-enter Password is required',
+                'txtuserfirstname' => 'First Name is required',
+                'txtuserlastname' => 'Last Name is required',
+                'txtuseremail' => 'Email Address is required'
+            ])
+            ->validateMatches(
+                ['txtuserpassword', 'txtuserpassword2'], 
+                'Passwords must match'
+            )
+            ->validateEmail('txtuseremail')
+            ->validateAlphaNumeric('txtusername',
+                        'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
+            ->validateURL('txtuserurl');
+
+    }
+
+    protected function createBlogUserFromPostData($postData)
     {
         $blogUser = new BlogUser();
 
