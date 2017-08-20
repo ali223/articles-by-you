@@ -91,21 +91,21 @@ class UsersController {
     {
         return (new FormValidator($postData))
             ->validateRequireds([
-                'txtusername' => 'User Name is required',
-                'txtuserpassword' => 'Password is required',
-                'txtuserpassword2' => 'Re-enter Password is required',
-                'txtuserfirstname' => 'First Name is required',
-                'txtuserlastname' => 'Last Name is required',
-                'txtuseremail' => 'Email Address is required'
+                'userName' => 'User Name is required',
+                'userPassword' => 'Password is required',
+                'userPassword2' => 'Re-enter Password is required',
+                'userFirstName' => 'First Name is required',
+                'userLastName' => 'Last Name is required',
+                'userEmail' => 'Email Address is required'
             ])
             ->validateMatches(
-                ['txtuserpassword', 'txtuserpassword2'], 
+                ['userPassword', 'userPassword2'], 
                 'Passwords must match'
             )
-            ->validateEmail('txtuseremail')
-            ->validateAlphaNumeric('txtusername',
+            ->validateEmail('userEmail')
+            ->validateAlphaNumeric('userName',
                         'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
-            ->validateURL('txtuserurl');
+            ->validateURL('userUrl');
 
     }
 
@@ -113,17 +113,10 @@ class UsersController {
     {
         $blogUser = new BlogUser();
 
-        $blogUser->userName = $this->filterInput($postData['txtusername']);
-
-        $blogUser->userFirstName = $this->filterInput($postData['txtuserfirstname']);
-       
-        $blogUser->userLastName = $this->filterInput($postData['txtuserlastname']);
-
-        $blogUser->userUrl = $this->filterInput($postData['txtuserurl']);
-
-        $blogUser->userEmail = $this->filterInput($postData['txtuseremail']);
-
-        $blogUser->userPassword = $this->filterInput($postData['txtuserpassword']);
+        foreach($postData as $field => $data) {
+            $blogUser->$field = 
+                $field == 'userPassword' ? sha1($data) : $data;
+        }
 
         $blogUser->userRegDate = time();
 
