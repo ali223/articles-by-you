@@ -1,8 +1,3 @@
-<?php
-
-namespace app;
-
-?>
 
 <div class="content">
 	<div class="panel">    
