@@ -1,7 +1,7 @@
 <?php
 
 
-namespace BW\controllers;
+namespace App\controllers;
 
 class View {
     private $_headerFile;

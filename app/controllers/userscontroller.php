@@ -1,18 +1,18 @@
 <?php
 
-namespace BW\controllers;
+namespace App\controllers;
 
-use BW\tools\BlogUser;
-use BW\tools\BlogPost;
-use BW\tools\BlogComment;
-use BW\tools\BlogUserDB;
-use BW\tools\BlogPostDB;
-use BW\tools\BlogCommentDB;
+use App\tools\BlogUser;
+use App\tools\BlogPost;
+use App\tools\BlogComment;
+use App\tools\BlogUserDB;
+use App\tools\BlogPostDB;
+use App\tools\BlogCommentDB;
 
-use BW\validators\UserRegistrationValidator;
-use BW\validators\UserProfileValidator;
-use BW\validators\UserPostValidator;
-use BW\validators\FilterInputTrait;
+use App\validators\UserRegistrationValidator;
+use App\validators\UserProfileValidator;
+use App\validators\UserPostValidator;
+use App\validators\FilterInputTrait;
 
 
 class UsersController {

@@ -1,20 +1,22 @@
 <?php
-namespace BW;
+namespace App;
 
 use Exception;
-use BW\controllers\PostsController;
-use BW\controllers\UsersController;
-use BW\controllers\SessionUtility;
-use BW\controllers\PagesController;
-use BW\controllers\View;
-use BW\tools\Database;
-use BW\tools\BlogPostDB;
-use BW\tools\BlogUserDB;
-use BW\tools\BlogCommentDB;
+use App\controllers\PostsController;
+use App\controllers\UsersController;
+use App\controllers\SessionUtility;
+use App\controllers\PagesController;
+use App\controllers\View;
+use App\tools\Database;
+use App\tools\BlogPostDB;
+use App\tools\BlogUserDB;
+use App\tools\BlogCommentDB;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
 class Route{
+
+	private $routes = [];
 
 	public function add($uri, $controllerName ) {
 		$this->routes[$uri] = $controllerName;
