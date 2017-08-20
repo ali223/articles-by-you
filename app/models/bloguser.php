@@ -1,6 +1,6 @@
 <?php
 
-namespace App\tools;
+namespace app\models;
 
  class BlogUser{
 

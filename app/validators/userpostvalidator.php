@@ -1,9 +1,9 @@
 <?php
 
-namespace App\validators;
+namespace app\validators;
 
-use App\tools\BlogPost;
-use App\tools\BlogPostDB;
+use app\models\BlogPost;
+use app\models\BlogPostDB;
 
 
 class UserPostValidator {

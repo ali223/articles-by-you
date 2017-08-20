@@ -1,8 +1,8 @@
 <?php
 
-namespace App\validators;
+namespace app\validators;
 
-use App\tools\BlogComment;
+use app\models\BlogComment;
 
 
 class CommentValidator{

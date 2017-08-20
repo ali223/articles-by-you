@@ -1,6 +1,6 @@
 <?php
 
-namespace App\validators;
+namespace app\validators;
 
 
 trait FilterInputTrait {
