@@ -18,6 +18,7 @@ $route->add('/profile'          ,    'UsersController@userprofile');
 $route->add('/password'         ,    'UsersController@userpassword');
 $route->add('/viewarticle'      ,    'UsersController@userviewarticle');
 $route->add('/newarticle'       ,    'UsersController@usernewarticle');
+$route->add('/updatearticle'       ,    'UsersController@userupdatearticle');
 
 $route->add('/registrationform' ,    'UsersController@userregistrationform');
 

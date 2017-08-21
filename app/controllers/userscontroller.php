@@ -251,8 +251,7 @@ class UsersController {
         $validator->validateRequireds([
                 'txtposttitle' => 'Please enter the Article Title',
                 'txtpostdesc' => 'Please enter the Article Description',
-                'txtposttext' => 'Please enter the Article Text',
-                'txtpostisvisible' => 'Please enter if the Article is a Draft or to be published'
+                'txtposttext' => 'Please enter the Article Text'
         ])->validateUploadedFile($_FILES, 'txtpostimage');
 
         $errorMessages = $validator->getValidationErrors();
@@ -268,19 +267,83 @@ class UsersController {
             $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
             
             $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile(($formType == 'edit') ? "views/users/usereditarticle.php" : "views/users/usernewarticle.php");
+            $this->view->setContentFile("views/users/usernewarticle.php");
             $this->view->renderView();
             return;
         }
             
         $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
-    
-        $blogPost->postReads = 0;
+
         $this->blogPostDatabase->addPost($blogPost);
+
         $successMessage = "Your New Article titled $blogPost->postTitle has been created successfully";
 
          $this->userhome($successMessage);
     }
+
+    public function userupdatearticle() {
+
+        if (!($this->sessionUtility->isLoggedIn())) {
+            $this->login();
+            return;
+        }
+
+
+        if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
+            
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
+            $this->view->setHeaderFile("views/userheader.php");            
+            $this->view->setContentFile("views/users/usereditarticle.php");
+            $this->view->renderView();
+                     
+            return;
+        }
+
+        
+        $blogPost = $this->createBlogPostFromPostData($_POST);
+
+        $blogPost->postId = $this->filterInput($_POST['txtpostid']);
+
+        $validator = new FormValidator($_POST);
+
+        $validator->validateRequireds([
+                'txtpostid' => 'Please enter the Article Id',
+                'txtposttitle' => 'Please enter the Article Title',
+                'txtpostdesc' => 'Please enter the Article Description',
+                'txtposttext' => 'Please enter the Article Text',
+        ]);
+
+        if($_FILES['txtpostimage']['name']) {
+            $validator->validateUploadedFile($_FILES, 'txtpostimage');
+        }
+
+        $errorMessages = $validator->getValidationErrors();
+
+        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
+
+        $blogPost->postUserId = $blogUser->userId;
+     
+        if (!empty($errorMessages)) {
+            $this->view->setData("errorMessages",$errorMessages);
+            $this->view->setData("blogPost", $blogPost);
+            $this->view->setData("blogUser", $blogUser);
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
+            
+            $this->view->setHeaderFile("views/userheader.php");
+            $this->view->setContentFile("views/users/usereditarticle.php");
+            $this->view->renderView();
+            return;
+        }
+            
+        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
+
+        $this->blogPostDatabase->updatePost($blogPost);
+
+        $successMessage = "Your Article titled $blogPost->postTitle has been updated successfully";
+
+         $this->userhome($successMessage);
+    }
+
 
     protected function uploadFile($fileData, $field)
     {
@@ -313,6 +376,8 @@ class UsersController {
         $blogPost->postIsVisible = 
                     $this->filterInput($postData['txtpostisvisible']);
 
+        $blogPost->postReads = 0;            
+
         $blogPost->postDate = time();
 
         return $blogPost;
@@ -338,7 +403,7 @@ class UsersController {
             $this->userhome();
             return;
         }
-        //$buser = $this->bloguserdbobj->getUserById($bpost->postuserid);            
+
         $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
         $this->view->setData("blogPost",$blogPost);
         $this->view->setHeaderFile("views/userheader.php");
