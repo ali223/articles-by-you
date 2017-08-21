@@ -9,9 +9,7 @@ use app\models\BlogUserDB;
 use app\models\BlogPostDB;
 use app\models\BlogCommentDB;
 
-use app\validators\UserRegistrationValidator;
 use app\validators\UserProfileValidator;
-use app\validators\UserPostValidator;
 use app\validators\FilterInputTrait;
 use app\validators\FormValidator;
 
