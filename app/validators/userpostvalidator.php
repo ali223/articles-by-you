@@ -35,7 +35,7 @@ class UserPostValidator {
         }
 
         if ($userPostForm['txtpostisvisible'] == '') {
-            $errorMessages[] = "Please enter the if the Article is a Draft or to be published";
+            $errorMessages[] = "Please enter if the Article is a Draft or to be published";
         } else {
             $blogPost->postIsVisible = $this->filterInput($userPostForm['txtpostisvisible']);
         }

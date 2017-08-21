@@ -86,6 +86,36 @@ class FormValidator
 		return $this;
 	}
 
+	public function validateUploadedFile($fileData, $field)
+	{
+		// exit(var_dump($fileData));
+		
+		$allowedTypes = ['image/jpeg', 'image/gif'];
+
+		if(! $fileData[$field]) {
+			return $this;
+		}
+
+		if($fileData[$field]['error'] == UPLOAD_ERR_NO_FILE) {
+			$this->validationErrors[] = 'No Article Image was uploaded';
+			return $this;
+		}
+
+		if(! in_array($fileData[$field]['type'], $allowedTypes)) {
+
+			$this->validationErrors[] = 
+				'Images type must be jpg/jpeg or gif';
+
+			return $this;
+        }
+
+		if($fileData[$field]['error'] == UPLOAD_ERR_FORM_SIZE) {
+			$this->validationErrors[] = 'Uploaded image file size must be 5mb or less.';
+		}
+
+		return $this;
+	}
+
 
 
 	public function getValidationErrors() 

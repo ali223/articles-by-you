@@ -239,26 +239,28 @@ class UsersController {
             $this->view->setHeaderFile("views/userheader.php");            
             $this->view->setContentFile("views/users/usernewarticle.php");
             $this->view->renderView();
-            
-         
+                     
             return;
         }
 
-        $errorMessages = [];
-
-         $formType = isset($_POST['formtype']) ? $this->filterInput($_POST['formtype']) : '';
-
-        $blogPost = new BlogPost();
-
-        $userPostValidator = new UserPostValidator();
-
-        $errorMessages = $userPostValidator->validatePostForm($_POST, $blogPost, $_FILES,$formType);
         
-        
-        // get the currently logged in user's user id and store it in the new post data
+        $blogPost = $this->createBlogPostFromPostData($_POST);
+
+        $validator = new FormValidator($_POST);
+
+        $validator->validateRequireds([
+                'txtposttitle' => 'Please enter the Article Title',
+                'txtpostdesc' => 'Please enter the Article Description',
+                'txtposttext' => 'Please enter the Article Text',
+                'txtpostisvisible' => 'Please enter if the Article is a Draft or to be published'
+        ])->validateUploadedFile($_FILES, 'txtpostimage');
+
+        $errorMessages = $validator->getValidationErrors();
+
         $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
+
         $blogPost->postUserId = $blogUser->userId;
-       
+     
         if (!empty($errorMessages)) {
             $this->view->setData("errorMessages",$errorMessages);
             $this->view->setData("blogPost", $blogPost);
@@ -270,18 +272,50 @@ class UsersController {
             $this->view->renderView();
             return;
         }
+            
+        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
+    
+        $blogPost->postReads = 0;
+        $this->blogPostDatabase->addPost($blogPost);
+        $successMessage = "Your New Article titled $blogPost->postTitle has been created successfully";
 
+         $this->userhome($successMessage);
+    }
 
-        if ($formType == "new") {
-            $blogPost->postReads = 0;
-            $this->blogPostDatabase->addPost($blogPost);
-            $successMessage = "Your New Article titled $blogPost->postTitle has been created successfully";
-        } elseif ($formType == "edit") {
-            $this->blogPostDatabase->updatePost($blogPost);
-            $successMessage = "Your Article titled $blogPost->postTitle has been updated successfully";
+    protected function uploadFile($fileData, $field)
+    {
+        $targetdir = "images/";
+
+        $targetFile = 
+            $targetdir . basename($_FILES['txtpostimage']['name']);
+
+        if(move_uploaded_file($_FILES['txtpostimage']['tmp_name'], $targetFile)) {
+            return $targetFile;
         }
 
-        $this->userhome($successMessage);
+        return '';
+
+    }
+
+    protected function createBlogPostFromPostData($postData)
+    {
+        $blogPost = new BlogPost();
+
+        $blogPost->postTitle = 
+                    $this->filterInput($postData['txtposttitle']);
+
+        $blogPost->postDesc = 
+                    $this->filterInput($postData['txtpostdesc']);
+
+        $blogPost->postText = 
+                    $this->filterInput($postData['txtposttext']);
+
+        $blogPost->postIsVisible = 
+                    $this->filterInput($postData['txtpostisvisible']);
+
+        $blogPost->postDate = time();
+
+        return $blogPost;
     }
 
     public function usereditarticle() {
