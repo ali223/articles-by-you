@@ -61,7 +61,7 @@ class UserPostsController
         $this->view->renderView();
     }
 
-    public function usernewarticle() 
+    public function create() 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {

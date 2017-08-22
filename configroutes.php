@@ -17,7 +17,7 @@ $route->add('/deletearticle'    ,   'UserPostsController@destroy');
 $route->add('/profile'          ,   'UsersController@userprofile');
 $route->add('/password'         ,   'UsersController@userpassword');
 $route->add('/viewarticle'      ,   'UserPostsController@show');
-$route->add('/newarticle'       ,   'UserPostsController@usernewarticle');
+$route->add('/newarticle'       ,   'UserPostsController@create');
 $route->add('/updatearticle'    ,   'UserPostsController@update');
 
 $route->add('/registrationform' ,   'UsersController@userregistrationform');
