@@ -12,9 +12,11 @@ use app\models\BlogCommentDB;
 use app\validators\FilterInputTrait;
 use app\validators\FormValidator;
 
+use app\utilities\RedirectTrait;
+
 
 class UsersController {
-    use FilterInputTrait;
+    use FilterInputTrait, RedirectTrait;
 
     protected $blogPostDatabase;
     protected $blogUserDatabase;
@@ -123,7 +125,8 @@ class UsersController {
 
     public function login() {
         if ($this->sessionUtility->isLoggedIn()) {
-            $this->userhome();
+            //$this->userhome();
+            $this->redirectTo('/home');
             return;
         }
 
@@ -165,15 +168,24 @@ class UsersController {
         }
 
         //the following lines get executed, if the user has been authenticated successfully
-        $this->sessionUtility->storeInSession($username);
-        $this->userhome();
+        $this->sessionUtility->loginUser($username);
+        //$this->userhome();
+        $this->redirectTo('/home');
     }
 
-    public function userhome($message = null) {
+    public function userhome() {
         if (!($this->sessionUtility->isLoggedIn())) {
-            $this->login();
+            // $this->login();
+            $this->redirectTo('/login');
             return;
         }
+
+        $message = '';
+
+        if($this->sessionUtility->has('message')) {
+            $message = $this->sessionUtility->getAndRemove('message');
+        }
+
 
         // the following lines get executed, only if there is a user currently logged in
 
@@ -192,23 +204,23 @@ class UsersController {
 
     public function userviewarticle() {
         if (!$this->sessionUtility->isLoggedIn()) {
-            $this->login();
-            return;
+            // $this->login();
+            return $this->redirectTo('/login');
         }
 
         $errorMessages = [];
 
         if (!isset($_GET['id'])) {
-            $this->userhome();
-            return;
+            //$this->userhome();
+            return $this->redirectTo('/home');
         }
 
         $id = $this->filterInput($_GET['id']);
         $blogPost = $this->blogPostDatabase->getPost($id);
 
         if (!$blogPost) {
-            $this->userhome();
-            return;
+            //$this->userhome();
+            return $this->redirectTo('/home');
         }
 
         $blogUser = $this->blogUserDatabase->getUserById($blogPost->postUserId);
@@ -226,8 +238,8 @@ class UsersController {
     public function usernewarticle() {
 
         if (!($this->sessionUtility->isLoggedIn())) {
-            $this->login();
-            return;
+            //$this->login();
+            return $this->redirectTo('/login');
         }
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -273,9 +285,10 @@ class UsersController {
 
         $this->blogPostDatabase->addPost($blogPost);
 
-        $successMessage = "Your New Article titled $blogPost->postTitle has been created successfully";
+        $this->sessionUtility->put('message', "Your New Article titled $blogPost->postTitle has been created successfully");
 
-         $this->userhome($successMessage);
+         // $this->userhome();
+        $this->redirectTo('/home');
     }
 
     public function userupdatearticle() {

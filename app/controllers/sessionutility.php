@@ -1,7 +1,8 @@
 <?php
 namespace app\controllers;
 
-class SessionUtility {
+class SessionUtility 
+{
 
     public function __construct()
     {
@@ -9,20 +10,62 @@ class SessionUtility {
           session_start();      
     }
 
-    public function isLoggedIn(){
-        
+    public function isLoggedIn()
+    {     
         return isset($_SESSION['username']);
     }
     
-    public function getLoggedInUsername() {
+    public function getLoggedInUsername() 
+    {
         return isset($_SESSION['username']) ? $_SESSION['username'] : null;
     }
+
+    public function loginUser($username)
+    {
+        $_SESSION['username'] = $username;
+    }
     
-   public function storeInSession($username){
-        $_SESSION['username'] = $username;       
+   public function put($key, $value)
+   {
+        $_SESSION[$key] = $value;       
    }
-   public function endSession(){
-        $_SESSION['username'] = '';
+
+   public function get($key)
+   {
+      return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+   }
+
+   public function getAndRemove($key)
+   {
+      if(isset($_SESSION[$key])) {
+        $value = $_SESSION[$key];
+        $_SESSION[$key] = null;
+        return $value;
+      }
+
+      return false;
+
+   }
+
+
+   public function has($key)
+   {
+      return isset($_SESSION[$key]);
+   }
+
+   public function remove($key)
+   {
+      if(isset($_SESSION[$key])) {
+        $_SESSION[$key] = null;
+        return true;
+      }
+
+      return false;
+   }
+
+   public function endSession()
+   {
+        $_SESSION = [];
         session_destroy();       
    }
 
