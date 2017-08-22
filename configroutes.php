@@ -12,13 +12,13 @@ $route->add('/search'     ,    'PostsController@search');
 
 
 $route->add('/home'             ,   'UsersController@userhome');
-$route->add('/editarticle'      ,   'UserPostsController@usereditarticle');
-$route->add('/deletearticle'    ,   'UserPostsController@userdeletearticle');
+$route->add('/editarticle'      ,   'UserPostsController@edit');
+$route->add('/deletearticle'    ,   'UserPostsController@destroy');
 $route->add('/profile'          ,   'UsersController@userprofile');
 $route->add('/password'         ,   'UsersController@userpassword');
 $route->add('/viewarticle'      ,   'UserPostsController@show');
 $route->add('/newarticle'       ,   'UserPostsController@usernewarticle');
-$route->add('/updatearticle'    ,   'UserPostsController@userupdatearticle');
+$route->add('/updatearticle'    ,   'UserPostsController@update');
 
 $route->add('/registrationform' ,   'UsersController@userregistrationform');
 
