@@ -4,10 +4,8 @@ namespace app\controllers;
 
 use app\models\BlogUser;
 use app\models\BlogPost;
-use app\models\BlogComment;
 use app\models\BlogUserDB;
 use app\models\BlogPostDB;
-use app\models\BlogCommentDB;
 
 use app\validators\FilterInputTrait;
 use app\validators\FormValidator;
@@ -24,12 +22,11 @@ class UsersController {
     protected $view;
     protected $sessionUtility;
     
-    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, BlogCommentDB $blogCommentDatabase, View $view, SessionUtility $sessionUtility) {
+    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, View $view, SessionUtility $sessionUtility) {
              
 
         $this->blogPostDatabase = $blogPostDatabase;
         $this->blogUserDatabase = $blogUserDatabase;
-        $this->blogCommentDatabase = $blogCommentDatabase;
         $this->view = $view;
         $this->sessionUtility = $sessionUtility;
        
@@ -267,7 +264,7 @@ class UsersController {
     }
 
     public function userpassword() {
-        
+
         $this->redirectIfUserNotLoggedIn();
         
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {

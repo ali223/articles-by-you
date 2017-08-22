@@ -78,13 +78,12 @@ class Route{
 	          
 	          $blogPostDatabase = new BlogPostDB($database);
 	          $blogUserDatabase = new BlogUserDB($database);
-	          $blogCommentDatabase = new BlogCommentDB($database);
-	  
+	          	  
 	          $view = new View("views/header.php", '', "views/footer.php");
 
 	          $sessionUtility = new sessionUtility();
 
-	          $controller = new UsersController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view, $sessionUtility);
+	          $controller = new UsersController($blogUserDatabase, $blogPostDatabase, $view, $sessionUtility);
 
 	           break;
 	        }	
