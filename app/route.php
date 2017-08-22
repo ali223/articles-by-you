@@ -3,6 +3,7 @@ namespace app;
 
 use Exception;
 use app\controllers\PostsController;
+use app\controllers\UserPostsController;
 use app\controllers\UsersController;
 use app\controllers\SessionUtility;
 use app\controllers\PagesController;
@@ -56,6 +57,20 @@ class Route{
 	          $controller = new PostsController($blogUserDatabase, $blogPostDatabase, $blogCommentDatabase, $view);
 
 	           break;
+
+	      case 'UserPostsController':
+	          $database = new Database(DB_DSN, DB_USER, DB_PASSWORD);
+	          
+	          $blogPostDatabase = new BlogPostDB($database);
+	          $blogUserDatabase = new BlogUserDB($database);
+	   
+	   		  $sessionUtility = new SessionUtility();
+
+	          $view = new View("views/header.php", '', "views/footer.php");
+
+	          $controller = new UserPostsController($blogUserDatabase, $blogPostDatabase, $sessionUtility, $view);
+
+	          break;
 
          case 'UsersController':
 

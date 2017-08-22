@@ -202,38 +202,6 @@ class UsersController {
                
     }
 
-    public function userviewarticle() {
-        if (!$this->sessionUtility->isLoggedIn()) {
-            // $this->login();
-            return $this->redirectTo('/login');
-        }
-
-        $errorMessages = [];
-
-        if (!isset($_GET['id'])) {
-            //$this->userhome();
-            return $this->redirectTo('/home');
-        }
-
-        $id = $this->filterInput($_GET['id']);
-        $blogPost = $this->blogPostDatabase->getPost($id);
-
-        if (!$blogPost) {
-            //$this->userhome();
-            return $this->redirectTo('/home');
-        }
-
-        $blogUser = $this->blogUserDatabase->getUserById($blogPost->postUserId);
-
-        
-        $this->view->setData("blogPost", $blogPost);
-        $this->view->setData("blogUser", $blogUser);
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/userviewarticle.php");
-        $this->view->renderView();
-        
-    }
 
     public function usernewarticle() {
 

@@ -16,7 +16,7 @@ $route->add('/editarticle'      ,    'UsersController@usereditarticle');
 $route->add('/deletearticle'    ,    'UsersController@userdeletearticle');
 $route->add('/profile'          ,    'UsersController@userprofile');
 $route->add('/password'         ,    'UsersController@userpassword');
-$route->add('/viewarticle'      ,    'UsersController@userviewarticle');
+$route->add('/viewarticle'      ,    'UserPostsController@show');
 $route->add('/newarticle'       ,    'UsersController@usernewarticle');
 $route->add('/updatearticle'       ,    'UsersController@userupdatearticle');
 
