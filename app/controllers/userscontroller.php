@@ -13,7 +13,8 @@ use app\validators\FormValidator;
 use app\utilities\RedirectTrait;
 use app\utilities\SessionUtility;
 
-class UsersController {
+class UsersController 
+{
     use FilterInputTrait, RedirectTrait;
 
     protected $blogPostDatabase;
@@ -186,7 +187,7 @@ class UsersController {
         
     }
 
-    public function userprofile() 
+    public function userProfile() 
     {
 
         $this->redirectIfUserNotLoggedIn();
@@ -246,7 +247,7 @@ class UsersController {
         $this->userhome($successMessage);
     }
 
-    public function userpassword() 
+    public function userPassword() 
     {
 
         $this->redirectIfUserNotLoggedIn();
