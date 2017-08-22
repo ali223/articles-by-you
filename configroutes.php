@@ -20,9 +20,9 @@ $route->add('/viewarticle'      ,   'UserPostsController@show');
 $route->add('/newarticle'       ,   'UserPostsController@create');
 $route->add('/updatearticle'    ,   'UserPostsController@update');
 
-$route->add('/registrationform' ,   'UsersController@userregistrationform');
+$route->add('/registrationform' ,   'UsersController@create');
 
-$route->add('/createuser'       ,   'UsersController@create');
+$route->add('/createuser'       ,   'UsersController@store');
 
 $route->add('/login'            ,   'UsersController@login');
 $route->add('/dologin'          ,   'UsersController@dologin');

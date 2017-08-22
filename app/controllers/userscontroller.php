@@ -33,7 +33,7 @@ class UsersController {
     }
 
 
-    public function userregistrationform() 
+    public function create() 
     {
 
         $pageTitle = "Welcome to Articles By U -- Registration Form";
@@ -45,7 +45,7 @@ class UsersController {
         
     }
 
-    public function create() 
+    public function store() 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
