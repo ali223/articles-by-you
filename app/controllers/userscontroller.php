@@ -9,7 +9,6 @@ use app\models\BlogUserDB;
 use app\models\BlogPostDB;
 use app\models\BlogCommentDB;
 
-use app\validators\UserProfileValidator;
 use app\validators\FilterInputTrait;
 use app\validators\FormValidator;
 
@@ -459,14 +458,11 @@ class UsersController {
             return;
         }
 
-        //echo "profile updated";
         $blogUser = new BlogUser();
-        //echo "user profile";
+
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            // get the details of current user to pre-fill the profile form
 
-
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
+            $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
             
             $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
             $this->view->setData("blogUser",$blogUser);
@@ -479,10 +475,28 @@ class UsersController {
 
         $blogUser->userName = $this->sessionUtility->getLoggedInUsername();
 
-        $userProfileValidator = new userProfileValidator();
+        $blogUser->userFirstName = 
+                $this->filterInput($_POST['txtuserfirstname']);
 
-        $errorMessages = $userProfileValidator->validateProfileForm($_POST, $blogUser);
+        $blogUser->userLastName = 
+                $this->filterInput($_POST['txtuserlastname']);
 
+        $blogUser->userUrl = 
+            $this->filterInput($_POST['txtuserurl']);
+
+        $blogUser->userEmail = 
+            $this->filterInput($_POST['txtuseremail']);
+
+
+        $errorMessages = (new FormValidator($_POST))
+            ->validateRequireds([
+                'txtuserfirstname' => 'First Name is required',
+                'txtuserlastname' => 'Last Name is required',
+                'txtuseremail' => 'Email Address is required'
+            ])
+            ->validateEmail('txtuseremail')
+            ->validateURL('txtuserurl')
+            ->getValidationErrors();
        
         if (!empty($errorMessages)) {
             $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
