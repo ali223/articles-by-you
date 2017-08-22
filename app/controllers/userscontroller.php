@@ -22,9 +22,9 @@ class UsersController {
     protected $view;
     protected $sessionUtility;
     
-    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, View $view, SessionUtility $sessionUtility) {
+    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, View $view, SessionUtility $sessionUtility) 
+    {
              
-
         $this->blogPostDatabase = $blogPostDatabase;
         $this->blogUserDatabase = $blogUserDatabase;
         $this->view = $view;
@@ -33,7 +33,8 @@ class UsersController {
     }
 
 
-    public function userregistrationform() {
+    public function userregistrationform() 
+    {
 
         $pageTitle = "Welcome to Articles By U -- Registration Form";
 
@@ -44,7 +45,8 @@ class UsersController {
         
     }
 
-    public function create() {
+    public function create() 
+    {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             $this->userRegistrationForm();
@@ -120,7 +122,8 @@ class UsersController {
 
     }
 
-    public function login() {
+    public function login() 
+    {
         if ($this->sessionUtility->isLoggedIn()) {
             return $this->redirectTo('/home');            
         }
@@ -134,21 +137,21 @@ class UsersController {
             return;
         }
 
-        //echo "data submitted";
-        if (empty($_POST['txtusername']) || empty($_POST['txtuserpassword'])) {
-            
-            $errorMessages[] = "Please enter your User Name and Password";
-            
-            $this->view->setData("errorMessages",$errorMessages);
+        $errorMessages = (new FormValidator($_POST))
+                ->validateRequireds([
+                    'txtusername' => 'Please enter your username',
+                    'txtuserpassword' => 'Please enter your password'
+                ])->getValidationErrors();
+
+        if($errorMessages) {
+            $this->view->setData("errorMessages", $errorMessages);
             $this->view->setContentFile("views/users/login.php");
-            $this->view->renderView();            
-            
-            return;
-            
-        } else {
-            $username = $this->filterInput($_POST['txtusername']);
-            $password = $this->filterInput($_POST['txtuserpassword']);
+            $this->view->renderView();   
+            return;         
         }
+
+        $username = $this->filterInput($_POST['txtusername']);
+        $password = $this->filterInput($_POST['txtuserpassword']);
 
 
         if (!($this->blogUserDatabase->authenticateUser($username, sha1($password)))) {
@@ -169,29 +172,8 @@ class UsersController {
         return $this->redirectTo('/home');
     }
 
-    public function userhome() {
-
-        $this->redirectIfUserNotLoggedIn();
-
-        $message = '';
-
-        if($this->sessionUtility->has('message')) {
-            $message = $this->sessionUtility->getAndRemove('message');
-        }
-       
-        $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->sessionUtility->getLoggedInUsername());
-        
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setData("message", $message);
-        $this->view->setData("blogPostsList", $blogPostsList);
-        
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/userhome.php");
-        $this->view->renderView();
-               
-    }
-
-    public function logout() {
+    public function logout() 
+    {
         if ($this->sessionUtility->isLoggedIn()) {
             $this->sessionUtility->endSession();
             $logoutMessage = "You have successfully logged out of your acccount.";
@@ -204,7 +186,8 @@ class UsersController {
         
     }
 
-    public function userprofile() {
+    public function userprofile() 
+    {
 
         $this->redirectIfUserNotLoggedIn();
 
@@ -263,7 +246,8 @@ class UsersController {
         $this->userhome($successMessage);
     }
 
-    public function userpassword() {
+    public function userpassword() 
+    {
 
         $this->redirectIfUserNotLoggedIn();
         

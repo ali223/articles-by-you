@@ -33,6 +33,31 @@ class UserPostsController
         $this->view = $view;
 
     }    
+
+    public function index() 
+    {
+
+        $this->redirectIfUserNotLoggedIn();
+
+        $message = '';
+
+        if($this->sessionUtility->has('message')) {
+            $message = $this->sessionUtility->getAndRemove('message');
+        }
+       
+        $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->sessionUtility->getLoggedInUsername());
+        
+        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
+        $this->view->setData("message", $message);
+        $this->view->setData("blogPostsList", $blogPostsList);
+        
+        $this->view->setHeaderFile("views/userheader.php");
+        $this->view->setContentFile("views/users/userhome.php");
+        $this->view->renderView();
+               
+    }
+
+
    
     public function show()
     {

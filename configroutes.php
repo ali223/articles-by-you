@@ -11,7 +11,7 @@ $route->add('/showpost'   ,    'PostsController@show');
 $route->add('/search'     ,    'PostsController@search');
 
 
-$route->add('/home'             ,   'UsersController@userhome');
+$route->add('/home'             ,   'UserPostsController@index');
 $route->add('/editarticle'      ,   'UserPostsController@edit');
 $route->add('/deletearticle'    ,   'UserPostsController@destroy');
 $route->add('/profile'          ,   'UsersController@userprofile');
