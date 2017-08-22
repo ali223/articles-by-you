@@ -243,8 +243,10 @@ class UsersController
         }
 
         $this->blogUserDatabase->updateUser($blogUser);
-        $successMessage = "Your profile has been updated successfully.";
-        $this->userhome($successMessage);
+
+        $this->sessionUtility->put('message', "Your profile has been updated successfully");
+
+        return $this->redirectTo('/home');
     }
 
     public function userPassword() 
@@ -288,9 +290,9 @@ class UsersController
             $result = $this->blogUserDatabase->updatePassword($username, $userpassword);
             //echo "<br /> result is $result";
             if ($result) {
-                $successMessage = "Your password has been changed successfully";
-                $this->userhome($successMessage);
-                return;
+                $this->sessionUtility->put('message', "Your password has been changed successfully");
+
+                return $this->redirectTo('/home');
             }
         } else {
             $errorMessages[] = "The current password entered is not valid.";
