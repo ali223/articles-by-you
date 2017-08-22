@@ -263,48 +263,48 @@ class UsersController
             return;
         }
 
-        $errorMessages = [];
-   
-        if (empty($_POST['txtuserpasswordcurrent'])) {
-            $errorMessages[] = "Please enter your current password.";
-        } else {
-            $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
-        }
+        $errorMessages = (new FormValidator($_POST))
+            ->validateRequireds([
+                'txtuserpasswordcurrent' => 'Please enter your current password.',
+                'txtuserpasswordnew1' => 'Please enter your new password.',
+                'txtuserpasswordnew2' => 'Please confirm your new password'
+            ])
+            ->validateMatches(
+                ['txtuserpasswordnew1', 'txtuserpasswordnew2'], 
+                'New and Confirmed Passwords must match')
+            ->getValidationErrors();
 
-        if (empty($_POST['txtuserpasswordnew1']) || empty($_POST['txtuserpasswordnew2'])) {
-            $errorMessages[] = "Please enter both your new and confirmed passwords.";
-        } else {
-            $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
-            $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
+        $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
 
-            if ($userpasswordnew1 != $userpasswordnew2) {
-                $errorMessages[] = "Your new and confirmed passwords do not match.";
-            } else {
-                $userpassword = $userpasswordnew1;
-            }
-        }
+        $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
+        $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
 
         $username = $this->sessionUtility->getLoggedInUsername();
-        if (empty($errorMessages) &&
-                $this->blogUserDatabase->authenticateUser($username, $userpasswordcurrent)) {
-            $result = $this->blogUserDatabase->updatePassword($username, $userpassword);
-            //echo "<br /> result is $result";
-            if ($result) {
-                $this->sessionUtility->put('message', "Your password has been changed successfully");
 
-                return $this->redirectTo('/home');
-            }
-        } else {
+        if (empty($errorMessages) && ! $this->blogUserDatabase
+                ->authenticateUser($username, $userpasswordcurrent)) {
             $errorMessages[] = "The current password entered is not valid.";
-            //echo "The current password entered is not valid.";
         }
-    
-        $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
-        $this->view->setData("errorMessages",$errorMessages);
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/userpassword.php");
-        $this->view->renderView();
-      
+
+
+        if($errorMessages) {
+            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
+            $this->view->setData("errorMessages", $errorMessages);
+            $this->view->setHeaderFile("views/userheader.php");
+            $this->view->setContentFile("views/users/userpassword.php");
+            $this->view->renderView();
+            return;
+        }     
+        
+        $result = $this->blogUserDatabase
+                    ->updatePassword($username, $userpasswordnew1);
+
+        $message = $result ? "Your password has been changed successfully."              : "The password could not be updated.";
+
+        $this->sessionUtility->put('message', $message);
+            
+        return $this->redirectTo('/home');
+             
     }
 
 }
