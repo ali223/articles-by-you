@@ -125,9 +125,7 @@ class UsersController {
 
     public function login() {
         if ($this->sessionUtility->isLoggedIn()) {
-            //$this->userhome();
-            $this->redirectTo('/home');
-            return;
+            return $this->redirectTo('/home');            
         }
 
         $errorMessages = [];
@@ -168,28 +166,22 @@ class UsersController {
         }
 
         //the following lines get executed, if the user has been authenticated successfully
+
         $this->sessionUtility->loginUser($username);
-        //$this->userhome();
-        $this->redirectTo('/home');
+        
+        return $this->redirectTo('/home');
     }
 
     public function userhome() {
-        if (!($this->sessionUtility->isLoggedIn())) {
-            // $this->login();
-            $this->redirectTo('/login');
-            return;
-        }
+
+        $this->redirectIfUserNotLoggedIn();
 
         $message = '';
 
         if($this->sessionUtility->has('message')) {
             $message = $this->sessionUtility->getAndRemove('message');
         }
-
-
-        // the following lines get executed, only if there is a user currently logged in
-
-        
+       
         $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->sessionUtility->getLoggedInUsername());
         
         $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
@@ -200,194 +192,6 @@ class UsersController {
         $this->view->setContentFile("views/users/userhome.php");
         $this->view->renderView();
                
-    }
-
-
-    public function usernewarticle() {
-
-        if (!($this->sessionUtility->isLoggedIn())) {
-            //$this->login();
-            return $this->redirectTo('/login');
-        }
-
-        if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setHeaderFile("views/userheader.php");            
-            $this->view->setContentFile("views/users/usernewarticle.php");
-            $this->view->renderView();
-                     
-            return;
-        }
-
-        
-        $blogPost = $this->createBlogPostFromPostData($_POST);
-
-        $validator = new FormValidator($_POST);
-
-        $validator->validateRequireds([
-                'txtposttitle' => 'Please enter the Article Title',
-                'txtpostdesc' => 'Please enter the Article Description',
-                'txtposttext' => 'Please enter the Article Text'
-        ])->validateUploadedFile($_FILES, 'txtpostimage');
-
-        $errorMessages = $validator->getValidationErrors();
-
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
-
-        $blogPost->postUserId = $blogUser->userId;
-     
-        if (!empty($errorMessages)) {
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setData("blogPost", $blogPost);
-            $this->view->setData("blogUser", $blogUser);
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            
-            $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/usernewarticle.php");
-            $this->view->renderView();
-            return;
-        }
-            
-        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
-
-        $this->blogPostDatabase->addPost($blogPost);
-
-        $this->sessionUtility->put('message', "Your New Article titled $blogPost->postTitle has been created successfully");
-
-         // $this->userhome();
-        $this->redirectTo('/home');
-    }
-
-    public function userupdatearticle() {
-
-        if (!($this->sessionUtility->isLoggedIn())) {
-            $this->login();
-            return;
-        }
-
-
-        if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setHeaderFile("views/userheader.php");            
-            $this->view->setContentFile("views/users/usereditarticle.php");
-            $this->view->renderView();
-                     
-            return;
-        }
-
-        
-        $blogPost = $this->createBlogPostFromPostData($_POST);
-
-        $blogPost->postId = $this->filterInput($_POST['txtpostid']);
-
-        $validator = new FormValidator($_POST);
-
-        $validator->validateRequireds([
-                'txtpostid' => 'Please enter the Article Id',
-                'txtposttitle' => 'Please enter the Article Title',
-                'txtpostdesc' => 'Please enter the Article Description',
-                'txtposttext' => 'Please enter the Article Text',
-        ]);
-
-        if($_FILES['txtpostimage']['name']) {
-            $validator->validateUploadedFile($_FILES, 'txtpostimage');
-        }
-
-        $errorMessages = $validator->getValidationErrors();
-
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
-
-        $blogPost->postUserId = $blogUser->userId;
-     
-        if (!empty($errorMessages)) {
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setData("blogPost", $blogPost);
-            $this->view->setData("blogUser", $blogUser);
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            
-            $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/usereditarticle.php");
-            $this->view->renderView();
-            return;
-        }
-            
-        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
-
-        $this->blogPostDatabase->updatePost($blogPost);
-
-        $successMessage = "Your Article titled $blogPost->postTitle has been updated successfully";
-
-         $this->userhome($successMessage);
-    }
-
-
-    protected function uploadFile($fileData, $field)
-    {
-        $targetdir = "images/";
-
-        $targetFile = 
-            $targetdir . basename($_FILES['txtpostimage']['name']);
-
-        if(move_uploaded_file($_FILES['txtpostimage']['tmp_name'], $targetFile)) {
-            return $targetFile;
-        }
-
-        return '';
-
-    }
-
-    protected function createBlogPostFromPostData($postData)
-    {
-        $blogPost = new BlogPost();
-
-        $blogPost->postTitle = 
-                    $this->filterInput($postData['txtposttitle']);
-
-        $blogPost->postDesc = 
-                    $this->filterInput($postData['txtpostdesc']);
-
-        $blogPost->postText = 
-                    $this->filterInput($postData['txtposttext']);
-
-        $blogPost->postIsVisible = 
-                    $this->filterInput($postData['txtpostisvisible']);
-
-        $blogPost->postReads = 0;            
-
-        $blogPost->postDate = time();
-
-        return $blogPost;
-    }
-
-    public function usereditarticle() {
-
-        if (!($this->sessionUtility->isLoggedIn())) {
-            $this->login();
-            return;
-        }
-
-        if (!(isset($_GET['id']))) {
-            $this->userhome();
-            return;
-        }
-
-        $id = $this->filterInput($_GET['id']);
-
-        $blogPost = $this->blogPostDatabase->getPost($_GET['id']);
-
-        if (!$blogPost) {
-            $this->userhome();
-            return;
-        }
-
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setData("blogPost",$blogPost);
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/usereditarticle.php");
-        $this->view->renderView();
-        
     }
 
     public function logout() {
@@ -403,41 +207,9 @@ class UsersController {
         
     }
 
-    public function error($errormsgs) {
-        
-    }
-
-    public function userdeletearticle() {
-        if (!$this->sessionUtility->isLoggedIn()) {
-            $this->login();
-            return;
-        }
-
-        if (!(isset($_GET['id']))) {
-            $this->userhome();
-            return;
-        }
-
-
-        $id = $this->filterInput($_GET['id']);
-        $blogPost = $this->blogPostDatabase->getPost($id);
-
-        if (!$blogPost) {
-            $this->userhome();
-            return;
-        }
-
-        $this->blogPostDatabase->deletePost($id);
-        $successMessage = "Your Article titled $blogPost->postTitle has been deleted successfully";
-        $this->userhome($successMessage);
-    }
-
     public function userprofile() {
 
-        if (!$this->sessionUtility->isLoggedIn()) {
-            $this->login();
-            return;
-        }
+        $this->redirectIfUserNotLoggedIn();
 
         $blogUser = new BlogUser();
 
@@ -495,66 +267,60 @@ class UsersController {
     }
 
     public function userpassword() {
-        if (!$this->sessionUtility->isLoggedIn()) {
-            $this->login();
+        
+        $this->redirectIfUserNotLoggedIn();
+        
+        if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
+            $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
+            $this->view->setHeaderFile("views/userheader.php");
+            $this->view->setContentFile("views/users/userpassword.php");
+            $this->view->renderView();
+            
             return;
         }
-        
-            if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-                $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
-                $this->view->setHeaderFile("views/userheader.php");
-                $this->view->setContentFile("views/users/userpassword.php");
-                $this->view->renderView();
-                
+
+        $errorMessages = [];
+   
+        if (empty($_POST['txtuserpasswordcurrent'])) {
+            $errorMessages[] = "Please enter your current password.";
+        } else {
+            $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
+        }
+
+        if (empty($_POST['txtuserpasswordnew1']) || empty($_POST['txtuserpasswordnew2'])) {
+            $errorMessages[] = "Please enter both your new and confirmed passwords.";
+        } else {
+            $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
+            $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
+
+            if ($userpasswordnew1 != $userpasswordnew2) {
+                $errorMessages[] = "Your new and confirmed passwords do not match.";
+            } else {
+                $userpassword = $userpasswordnew1;
+            }
+        }
+
+        $username = $this->sessionUtility->getLoggedInUsername();
+        if (empty($errorMessages) &&
+                $this->blogUserDatabase->authenticateUser($username, $userpasswordcurrent)) {
+            $result = $this->blogUserDatabase->updatePassword($username, $userpassword);
+            //echo "<br /> result is $result";
+            if ($result) {
+                $successMessage = "Your password has been changed successfully";
+                $this->userhome($successMessage);
                 return;
             }
-
-                $errorMessages = [];
-           
-                if (empty($_POST['txtuserpasswordcurrent'])) {
-                    $errorMessages[] = "Please enter your current password.";
-                } else {
-                    $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
-                }
-
-                if (empty($_POST['txtuserpasswordnew1']) || empty($_POST['txtuserpasswordnew2'])) {
-                    $errorMessages[] = "Please enter both your new and confirmed passwords.";
-                } else {
-                    $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
-                    $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
-
-                    if ($userpasswordnew1 != $userpasswordnew2) {
-                        $errorMessages[] = "Your new and confirmed passwords do not match.";
-                    } else {
-                        $userpassword = $userpasswordnew1;
-                    }
-                }
-
-                $username = $this->sessionUtility->getLoggedInUsername();
-                if (empty($errorMessages) &&
-                        $this->blogUserDatabase->authenticateUser($username, $userpasswordcurrent)) {
-                    $result = $this->blogUserDatabase->updatePassword($username, $userpassword);
-                    //echo "<br /> result is $result";
-                    if ($result) {
-                        $successMessage = "Your password has been changed successfully";
-                        $this->userhome($successMessage);
-                        return;
-                    }
-                } else {
-                    $errorMessages[] = "The current password entered is not valid.";
-                    //echo "The current password entered is not valid.";
-                }
-            
-                $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
-                $this->view->setData("errorMessages",$errorMessages);
-                $this->view->setHeaderFile("views/userheader.php");
-                $this->view->setContentFile("views/users/userpassword.php");
-                $this->view->renderView();
+        } else {
+            $errorMessages[] = "The current password entered is not valid.";
+            //echo "The current password entered is not valid.";
+        }
+    
+        $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
+        $this->view->setData("errorMessages",$errorMessages);
+        $this->view->setHeaderFile("views/userheader.php");
+        $this->view->setContentFile("views/users/userpassword.php");
+        $this->view->renderView();
       
     }
 
 }
-
-
-
-?>

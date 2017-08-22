@@ -10,5 +10,12 @@ trait RedirectTrait
 			header("Location: {$location}");
 		}
 	}
+
+    protected function redirectIfUserNotLoggedIn()
+    {
+        if (!$this->sessionUtility->isLoggedIn()) {
+            return $this->redirectTo('/login');
+        }
+    }
 	
 }
