@@ -1,5 +1,5 @@
 <?php
-namespace app\controllers;
+namespace app\utilities;
 
 class SessionUtility 
 {

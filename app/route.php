@@ -5,13 +5,14 @@ use Exception;
 use app\controllers\PostsController;
 use app\controllers\UserPostsController;
 use app\controllers\UsersController;
-use app\controllers\SessionUtility;
 use app\controllers\PagesController;
 use app\controllers\View;
 use app\models\Database;
 use app\models\BlogPostDB;
 use app\models\BlogUserDB;
 use app\models\BlogCommentDB;
+
+use app\utilities\SessionUtility;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 

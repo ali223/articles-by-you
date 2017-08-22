@@ -11,7 +11,7 @@ use app\validators\FilterInputTrait;
 use app\validators\FormValidator;
 
 use app\utilities\RedirectTrait;
-
+use app\utilities\SessionUtility;
 
 class UsersController {
     use FilterInputTrait, RedirectTrait;
