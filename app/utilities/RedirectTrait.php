@@ -17,5 +17,12 @@ trait RedirectTrait
             return $this->redirectTo('/login');
         }
     }
+
+    protected function redirectIfUserLoggedIn()
+    {
+        if ($this->sessionUtility->isLoggedIn()) {
+            return $this->redirectTo('/home');
+        }
+    }
 	
 }

@@ -67,12 +67,12 @@ class UsersController
            
         if ($errorMessages) {
 
-           $this->view->setData("blogUser",$blogUser);
-           $this->view->setData("errorMessages", $errorMessages);
-           $this->view->setContentFile("views/users/regform.php");
-           $this->view->renderView();
+            $this->view->setData("blogUser",$blogUser);
+            $this->view->setData("errorMessages", $errorMessages);
+            $this->view->setContentFile("views/users/regform.php");
+            $this->view->renderView();
 
-           return;
+            return;
         }      
 
         if ($this->blogUserDatabase->addUser($blogUser)) {
@@ -125,9 +125,7 @@ class UsersController
 
     public function login() 
     {
-        if ($this->sessionUtility->isLoggedIn()) {
-            return $this->redirectTo('/home');            
-        }
+        $this->redirectIfUserLoggedIn();
 
         $errorMessages = [];
 
