@@ -31,6 +31,8 @@ class UserPostsController
         $this->blogPostDatabase = $blogPostDatabase;
 
         $this->view = $view;
+        $this->view->setHeaderFile("views/userheader.php");
+        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
 
     }    
 
@@ -47,18 +49,14 @@ class UserPostsController
        
         $blogPostsList = $this->blogPostDatabase->getPostsByUser($this->sessionUtility->getLoggedInUsername());
         
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setData("message", $message);
-        $this->view->setData("blogPostsList", $blogPostsList);
-        
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/userhome.php");
-        $this->view->renderView();
+
+        return $this->view->show('users/userhome', [
+                'message' => $message,
+                'blogPostsList' => $blogPostsList
+            ]);
                
     }
 
-
-   
     public function show()
     {
 
@@ -78,28 +76,21 @@ class UserPostsController
 
         $blogUser = $this->blogUserDatabase->getUserById($blogPost->postUserId);
         
-        $this->view->setData("blogPost", $blogPost);
-        $this->view->setData("blogUser", $blogUser);
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/userviewarticle.php");
-        $this->view->renderView();
+        return $this->view->show('users/userviewarticle', [
+                'blogPost' => $blogPost,
+                'blogUser' => $blogUser
+            ]);
+
     }
 
     public function create() 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setHeaderFile("views/userheader.php");            
-            $this->view->setContentFile("views/users/usernewarticle.php");
-            $this->view->renderView();
-                     
-            return;
+                                
+            return $this->view->show('users/usernewarticle');
         }
 
-        
         $blogPost = $this->createBlogPostFromPostData($_POST);
 
         $validator = new FormValidator($_POST);
@@ -117,15 +108,12 @@ class UserPostsController
         $blogPost->postUserId = $blogUser->userId;
      
         if (!empty($errorMessages)) {
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setData("blogPost", $blogPost);
-            $this->view->setData("blogUser", $blogUser);
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            
-            $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/usernewarticle.php");
-            $this->view->renderView();
-            return;
+
+            return $this->view->show('users/usernewarticle', [
+                'errorMessages' => $errorMessages,
+                'blogPost' => $blogPost,
+                'blogUser' => $blogUser
+            ]);
         }
             
         $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
@@ -141,13 +129,8 @@ class UserPostsController
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setHeaderFile("views/userheader.php");            
-            $this->view->setContentFile("views/users/usereditarticle.php");
-            $this->view->renderView();
-                     
-            return;
+
+            return $this->view->show('users/usereditarticle');
         }
 
         
@@ -175,15 +158,11 @@ class UserPostsController
         $blogPost->postUserId = $blogUser->userId;
      
         if (!empty($errorMessages)) {
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setData("blogPost", $blogPost);
-            $this->view->setData("blogUser", $blogUser);
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            
-            $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/usereditarticle.php");
-            $this->view->renderView();
-            return;
+            return $this->view->show('users/usereditarticle', [
+                'errorMessages' => $errorMessages,
+                'blogPost' => $blogPost,
+                'blogUser' => $blogUser
+            ]);            
         }
             
         $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
@@ -250,11 +229,8 @@ class UserPostsController
             return $this->redirectTo('/home');
         }
 
-        $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-        $this->view->setData("blogPost",$blogPost);
-        $this->view->setHeaderFile("views/userheader.php");
-        $this->view->setContentFile("views/users/usereditarticle.php");
-        $this->view->renderView();
+        return $this->view->show('users/usereditarticle', 
+                            compact('blogPost'));
         
     }
 

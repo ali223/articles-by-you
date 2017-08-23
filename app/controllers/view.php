@@ -91,8 +91,11 @@ class View
         if(!file_exists($this->footerFile)) {
             throw new Exception("Template Footer File " . $this->footerFile . " does not exist");
         }
-
+        
+        extract($this->data);
+        
         extract($viewData);
+
         
         include($this->headerFile);
         include($fileName);
