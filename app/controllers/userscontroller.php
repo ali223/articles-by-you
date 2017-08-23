@@ -39,10 +39,7 @@ class UsersController
 
         $pageTitle = "Welcome to Articles By U -- Registration Form";
 
-        $this->view->setData('pageTitle', $pageTitle);
-        $this->view->setContentFile("views/users/regform.php");
-        $this->view->renderView();
-
+        $this->view->show('users/regform', compact('pageTitle'));
         
     }
 
@@ -67,21 +64,19 @@ class UsersController
            
         if ($errorMessages) {
 
-            $this->view->setData("blogUser",$blogUser);
-            $this->view->setData("errorMessages", $errorMessages);
-            $this->view->setContentFile("views/users/regform.php");
-            $this->view->renderView();
+            return $this->view->show('users/regform', [
+                    'blogUser' => $blogUser,
+                    'errorMessages' => $errorMessages
+                ]);
 
-            return;
         }      
 
         if ($this->blogUserDatabase->addUser($blogUser)) {
-            $this->view->setData("blogUser",$blogUser);
-            $this->view->setData("errorMessages", $errorMessages);
-            $this->view->setContentFile("views/users/userCreated.php");
-            $this->view->renderView();
 
-            return;
+            return $this->view->show('users/userCreated', [
+                    'blogUser' => $blogUser,
+                    'errorMessages' => $errorMessages                
+                ]);
         }
 
     }
@@ -130,10 +125,7 @@ class UsersController
         $errorMessages = [];
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            
-            $this->view->setContentFile("views/users/login.php");
-            $this->view->renderView();            
-            return;
+            return $this->view->show('users/login');
         }
 
         $errorMessages = (new FormValidator($_POST))
@@ -143,10 +135,8 @@ class UsersController
                 ])->getValidationErrors();
 
         if($errorMessages) {
-            $this->view->setData("errorMessages", $errorMessages);
-            $this->view->setContentFile("views/users/login.php");
-            $this->view->renderView();   
-            return;         
+            return $this->view->show('users/login', 
+                            compact('errorMessages'));         
         }
 
         $username = $this->filterInput($_POST['txtusername']);
@@ -157,11 +147,8 @@ class UsersController
 
             $errorMessages[] = "Login Failed : Username and password combination not valid.";
             
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setContentFile("views/users/login.php");
-            $this->view->renderView();            
-            
-            return;
+            return $this->view->show('users/login', 
+                            compact('errorMessages'));         
         }
 
         //the following lines get executed, if the user has been authenticated successfully
@@ -176,7 +163,7 @@ class UsersController
         if ($this->sessionUtility->isLoggedIn()) {
             $this->sessionUtility->endSession();
             $logoutMessage = "You have successfully logged out of your acccount.";
-            $this->view->setData("logoutMessage",$logoutMessage);
+            $this->view->setData("logoutMessage", $logoutMessage);
         }
         
         $this->view->setHeaderFile("views/header.php");
@@ -196,13 +183,12 @@ class UsersController
 
             $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
             
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setData("blogUser",$blogUser);
             $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/userprofile.php");
-            $this->view->renderView();
             
-            return;
+            return $this->view->show('users/userprofile' ,[
+                'username' => $this->sessionUtility->getLoggedInUsername(),
+                'blogUser' => $blogUser,
+            ]);
         }
 
         $blogUser->userName = $this->sessionUtility->getLoggedInUsername();
@@ -231,13 +217,15 @@ class UsersController
             ->getValidationErrors();
        
         if (!empty($errorMessages)) {
-            $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
-            $this->view->setData("errorMessages",$errorMessages);
-            $this->view->setData("blogUser", $blogUser);
+
             $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/userprofile.php");
-            $this->view->renderView();
-            return;
+
+            return $this->view->show('users/userprofile' ,[
+                'username' => $this->sessionUtility->getLoggedInUsername(),
+                'blogUser' => $blogUser,
+                'errorMessages' => $errorMessages
+            ]);
+
         }
 
         $this->blogUserDatabase->updateUser($blogUser);
@@ -253,12 +241,13 @@ class UsersController
         $this->redirectIfUserNotLoggedIn();
         
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            $this->view->setData("username",$this->sessionUtility->getLoggedInUsername());
+
             $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/userpassword.php");
-            $this->view->renderView();
-            
-            return;
+
+            return $this->view->show('users/userpassword' , [
+                'username' => $this->sessionUtility->getLoggedInUsername()
+            ]);
+
         }
 
         $errorMessages = (new FormValidator($_POST))
@@ -286,12 +275,14 @@ class UsersController
 
 
         if($errorMessages) {
-            $this->view->setData("username", $this->sessionUtility->getLoggedInUsername());
-            $this->view->setData("errorMessages", $errorMessages);
+            
             $this->view->setHeaderFile("views/userheader.php");
-            $this->view->setContentFile("views/users/userpassword.php");
-            $this->view->renderView();
-            return;
+
+            return $this->view->show('users/userpassword' ,[
+                'username' => $this->sessionUtility->getLoggedInUsername(),
+                'errorMessages' => $errorMessages,
+            ]);
+
         }     
         
         $result = $this->blogUserDatabase

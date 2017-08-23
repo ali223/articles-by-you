@@ -77,5 +77,28 @@ class View
         include($this->contentFile);
         include($this->footerFile);        
     }
+
+    public function show($fileName, array $viewData = [])
+    {
+        $fileName = 'views/' . $fileName . '.php';
+
+        if(!file_exists($this->headerFile)) {
+            throw new Exception("Template Header File " . $this->headerFile . " does not exist");
+        }
+        if(!file_exists($fileName)) {
+            throw new Exception("Template Content File " . $fileName . " does not exist");
+        }
+        if(!file_exists($this->footerFile)) {
+            throw new Exception("Template Footer File " . $this->footerFile . " does not exist");
+        }
+
+        extract($viewData);
+        
+        include($this->headerFile);
+        include($fileName);
+        include($this->footerFile);        
+
+
+    }
     
 }
