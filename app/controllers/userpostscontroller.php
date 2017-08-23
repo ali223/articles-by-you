@@ -1,15 +1,15 @@
 <?php
-namespace app\controllers;
+namespace App\Controllers;
 
-use app\models\BlogPostDB;
-use app\models\BlogUserDB;
-use app\models\BlogPost;
-use app\models\BlogComment;
-use app\validators\FilterInputTrait;
-use app\validators\FormValidator;
+use App\Models\BlogPostDB;
+use App\Models\BlogUserDB;
+use App\Models\BlogPost;
+use App\Models\BlogComment;
+use App\Validators\FilterInputTrait;
+use App\Validators\FormValidator;
 
-use app\utilities\RedirectTrait;
-use app\utilities\SessionUtility;
+use App\Utilities\RedirectTrait;
+use App\Utilities\SessionUtility;
 
 class UserPostsController 
 {

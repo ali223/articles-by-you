@@ -1,9 +1,9 @@
 <?php
 
-namespace app\models;
+namespace App\Models;
 
 use PDOException;
-use app\validators\FilterInputTrait;
+use App\Validators\FilterInputTrait;
 
 
 class BlogUserDB {

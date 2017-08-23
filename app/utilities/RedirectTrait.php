@@ -1,6 +1,6 @@
 <?php
 
-namespace app\utilities;
+namespace App\Utilities;
 
 trait RedirectTrait
 {

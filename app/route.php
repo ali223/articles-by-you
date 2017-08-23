@@ -1,18 +1,18 @@
 <?php
-namespace app;
+namespace App;
 
 use Exception;
-use app\controllers\PostsController;
-use app\controllers\UserPostsController;
-use app\controllers\UsersController;
-use app\controllers\PagesController;
-use app\controllers\View;
-use app\models\Database;
-use app\models\BlogPostDB;
-use app\models\BlogUserDB;
-use app\models\BlogCommentDB;
+use App\Controllers\PostsController;
+use App\Controllers\UserPostsController;
+use App\Controllers\UsersController;
+use App\Controllers\PagesController;
+use App\Controllers\View;
+use App\Models\Database;
+use App\Models\BlogPostDB;
+use App\Models\BlogUserDB;
+use App\Models\BlogCommentDB;
 
-use app\utilities\SessionUtility;
+use App\Utilities\SessionUtility;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
