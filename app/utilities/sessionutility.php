@@ -25,48 +25,48 @@ class SessionUtility
         $_SESSION['username'] = $username;
     }
     
-   public function put($key, $value)
-   {
+    public function put($key, $value)
+    {
         $_SESSION[$key] = $value;       
-   }
+    }
 
-   public function get($key)
-   {
-      return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
-   }
+    public function get($key)
+    {
+        return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+    }
 
-   public function getAndRemove($key)
-   {
-      if(isset($_SESSION[$key])) {
-        $value = $_SESSION[$key];
-        $_SESSION[$key] = null;
-        return $value;
-      }
+    public function getAndRemove($key)
+    {
+        if(isset($_SESSION[$key])) {
+            $value = $_SESSION[$key];
+            $_SESSION[$key] = null;
+            return $value;
+        }
 
-      return false;
+        return false;
 
-   }
+    }
 
 
-   public function has($key)
-   {
-      return isset($_SESSION[$key]);
-   }
+    public function has($key)
+    {
+        return isset($_SESSION[$key]);
+    }
 
-   public function remove($key)
-   {
-      if(isset($_SESSION[$key])) {
-        $_SESSION[$key] = null;
-        return true;
-      }
+    public function remove($key)
+    {
+        if(isset($_SESSION[$key])) {
+            $_SESSION[$key] = null;
+            return true;
+        }
 
-      return false;
-   }
+        return false;
+    }
 
-   public function endSession()
-   {
+    public function endSession()
+    {
         $_SESSION = [];
         session_destroy();       
-   }
+    }
 
 }

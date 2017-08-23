@@ -16,15 +16,18 @@ use App\Utilities\SessionUtility;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 
-class Route{
+class Route
+{
 
 	private $routes = [];
 
-	public function add($uri, $controllerName ) {
+	public function add($uri, $controllerName ) 
+	{
 		$this->routes[$uri] = $controllerName;
 	}
 
-	public function direct($uri){
+	public function direct($uri)
+	{
 		if(array_key_exists($uri, $this->routes)) {
 
 			$controller = explode('@', $this->routes[$uri])[0];
@@ -36,7 +39,8 @@ class Route{
 			return $this->callAction("PagesController", "error");
 	}
 
-	protected function callAction($controller, $action) {
+	protected function callAction($controller, $action) 
+	{
 
 		switch($controller) {
 

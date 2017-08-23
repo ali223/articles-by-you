@@ -3,74 +3,79 @@
 
 namespace app\controllers;
 
-class View {
-    private $_headerFile;
-    private $_contentFile;
-    private $_footerFile;
+class View 
+{
+    private $headerFile;
+    private $contentFile;
+    private $footerFile;
     
-    private $_data = [];
+    private $data = [];
     
-    public function __construct($headerFile = "views/header.php", $contentFile, $footerFile="views/footer.php"){
-        $this->_headerFile = $headerFile;
-        $this->_contentFile = $contentFile;
-        $this->_footerFile = $footerFile;
+    public function __construct($headerFile = "views/header.php", $contentFile, $footerFile="views/footer.php")
+    {
+        $this->headerFile = $headerFile;
+        $this->contentFile = $contentFile;
+        $this->footerFile = $footerFile;
         
     }
     
-    public function setHeaderFile($headerFile){
-        $this->_headerFile = $headerFile;
+    public function setHeaderFile($headerFile)
+    {
+        $this->headerFile = $headerFile;
     }
     
-    public function getHeaderFile(){
-        return $this->_headerFile;
+    public function getHeaderFile()
+    {
+        return $this->headerFile;
     }
     
-    public function setContentFile($contentFile){
-        $this->_contentFile = $contentFile;
+    public function setContentFile($contentFile)
+    {
+        $this->contentFile = $contentFile;
     }
     
-    public function getContentFile(){
-        return $this->_contentFile;
+    public function getContentFile()
+    {
+        return $this->contentFile;
     }
     
-    public function setFooterFile($footerFile){
-        $this->_footerFile = $footerFile;
+    public function setFooterFile($footerFile)
+    {
+        $this->footerFile = $footerFile;
     }
     
-    public function getFooterFile(){
-        return $this->_footerFile;
+    public function getFooterFile()
+    {
+        return $this->footerFile;
     }
     
-    public function setData($key, $value){
-       
-        $this->_data[$key] = $value;        
-        
-        
+    public function setData($key, $value)
+    {       
+        $this->data[$key] = $value;                
     }
     
-    public function getData($key){
-        return $this->_data[$key];      
+    public function getData($key)
+    {
+        return $this->data[$key];      
     }
     
-    public function renderView(){
-        if(!file_exists($this->_headerFile)){
-            throw new Exception("Template Header File " . $this->_headerFile . " does not exist");
+    public function renderView()
+    {
+        if(!file_exists($this->headerFile)) {
+            throw new Exception("Template Header File " . $this->headerFile . " does not exist");
         }
-        if(!file_exists($this->_contentFile)){
-            throw new Exception("Template Content File " . $this->_contentFile . " does not exist");
+        if(!file_exists($this->contentFile)) {
+            throw new Exception("Template Content File " . $this->contentFile . " does not exist");
         }
-        if(!file_exists($this->_footerFile)){
-            throw new Exception("Template Footer File " . $this->_footerFile . " does not exist");
+        if(!file_exists($this->footerFile)) {
+            throw new Exception("Template Footer File " . $this->footerFile . " does not exist");
         }
         
+        extract($this->data);
         
-        extract($this->_data);
-        
-        include($this->_headerFile);
-        include($this->_contentFile);
-        include($this->_footerFile);
-        
-        
+        include($this->headerFile);
+        include($this->contentFile);
+        include($this->footerFile);        
     }
     
 }
