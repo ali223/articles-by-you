@@ -181,9 +181,9 @@ class UserPostsController
         $targetdir = "images/";
 
         $targetFile = 
-            $targetdir . basename($_FILES['txtpostimage']['name']);
+            $targetdir . basename($fileData[$field]['name']);
 
-        if(move_uploaded_file($_FILES['txtpostimage']['tmp_name'], $targetFile)) {
+        if(move_uploaded_file($fileData[$field]['tmp_name'], $targetFile)) {
             return $targetFile;
         }
 

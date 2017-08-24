@@ -51,16 +51,15 @@ class UsersController
             return;
         }
 
-        $validator = $this->validateUserForm($_POST);
-
         $blogUser = $this->createBlogUserFromPostData($_POST);
 
-        $errorMessages = $validator->getValidationErrors();
+        $blogUser->userRegDate = time();
+
+        $errorMessages = $this->validateUserForm($_POST);
 
         if ($this->blogUserDatabase->userExists($blogUser->userName)) {
             $errorMessages[] = "The User Name $blogUser->userName alreadys exists. Please choose a different user name.";
         }
-
            
         if ($errorMessages) {
 
@@ -99,7 +98,8 @@ class UsersController
             ->validateEmail('userEmail')
             ->validateAlphaNumeric('userName',
                         'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
-            ->validateURL('userUrl');
+            ->validateURL('userUrl')
+            ->getValidationErrors();
 
     }
 
@@ -112,8 +112,6 @@ class UsersController
                 $field == 'userPassword' ? sha1($data) : $data;
         }
 
-        $blogUser->userRegDate = time();
-
         return $blogUser;
 
     }
@@ -121,8 +119,6 @@ class UsersController
     public function login() 
     {
         $this->redirectIfUserLoggedIn();
-
-        $errorMessages = [];
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
             return $this->view->show('users/login');
@@ -151,8 +147,6 @@ class UsersController
                             compact('errorMessages'));         
         }
 
-        //the following lines get executed, if the user has been authenticated successfully
-
         $this->sessionUtility->loginUser($username);
         
         return $this->redirectTo('/home');
@@ -160,24 +154,20 @@ class UsersController
 
     public function logout() 
     {
-        if ($this->sessionUtility->isLoggedIn()) {
-            $this->sessionUtility->endSession();
-            $logoutMessage = "You have successfully logged out of your acccount.";
-            $this->view->setData("logoutMessage", $logoutMessage);
-        }
+        $this->redirectIfUserNotLoggedIn();
         
-        $this->view->setHeaderFile("views/header.php");
-        $this->view->setContentFile("views/users/login.php");
-        $this->view->renderView();
-        
+        $this->sessionUtility->endSession();
+            
+        $logoutMessage = 
+            "You have successfully logged out of your acccount.";
+            
+        return $this->view->show('users/login', compact('logoutMessage'));
     }
 
     public function userProfile() 
     {
 
         $this->redirectIfUserNotLoggedIn();
-
-        $blogUser = new BlogUser();
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
 
@@ -191,29 +181,18 @@ class UsersController
             ]);
         }
 
+        $blogUser = $this->createBlogUserFromPostData($_POST);
+
         $blogUser->userName = $this->sessionUtility->getLoggedInUsername();
-
-        $blogUser->userFirstName = 
-                $this->filterInput($_POST['txtuserfirstname']);
-
-        $blogUser->userLastName = 
-                $this->filterInput($_POST['txtuserlastname']);
-
-        $blogUser->userUrl = 
-            $this->filterInput($_POST['txtuserurl']);
-
-        $blogUser->userEmail = 
-            $this->filterInput($_POST['txtuseremail']);
-
 
         $errorMessages = (new FormValidator($_POST))
             ->validateRequireds([
-                'txtuserfirstname' => 'First Name is required',
-                'txtuserlastname' => 'Last Name is required',
-                'txtuseremail' => 'Email Address is required'
+                'userFirstName' => 'First Name is required',
+                'userLastName' => 'Last Name is required',
+                'userEmail' => 'Email Address is required'
             ])
-            ->validateEmail('txtuseremail')
-            ->validateURL('txtuserurl')
+            ->validateEmail('userEmail')
+            ->validateURL('userUrl')
             ->getValidationErrors();
        
         if (!empty($errorMessages)) {
@@ -261,15 +240,14 @@ class UsersController
                 'New and Confirmed Passwords must match')
             ->getValidationErrors();
 
-        $userpasswordcurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
+        $passwordCurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
 
-        $userpasswordnew1 = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
-        $userpasswordnew2 = sha1($this->filterInput($_POST['txtuserpasswordnew2']));
+        $passwordNew = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
 
         $username = $this->sessionUtility->getLoggedInUsername();
 
         if (empty($errorMessages) && ! $this->blogUserDatabase
-                ->authenticateUser($username, $userpasswordcurrent)) {
+                ->authenticateUser($username, $passwordCurrent)) {
             $errorMessages[] = "The current password entered is not valid.";
         }
 
@@ -286,7 +264,7 @@ class UsersController
         }     
         
         $result = $this->blogUserDatabase
-                    ->updatePassword($username, $userpasswordnew1);
+                    ->updatePassword($username, $passwordNew);
 
         $message = $result ? "Your password has been changed successfully."              : "The password could not be updated.";
 
@@ -295,5 +273,4 @@ class UsersController
         return $this->redirectTo('/home');
              
     }
-
 }
