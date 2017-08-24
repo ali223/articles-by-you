@@ -3,9 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\BlogUser;
-use App\Models\BlogPost;
 use App\Models\BlogUserDB;
-use App\Models\BlogPostDB;
 
 use App\Validators\FilterInputTrait;
 use App\Validators\FormValidator;
@@ -17,16 +15,13 @@ class UsersController
 {
     use FilterInputTrait, RedirectTrait;
 
-    protected $blogPostDatabase;
     protected $blogUserDatabase;
-    protected $blogCommentDatabase;
     protected $view;
     protected $sessionUtility;
     
-    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, View $view, SessionUtility $sessionUtility) 
+    public function __construct(BlogUserDB $blogUserDatabase, View $view, SessionUtility $sessionUtility) 
     {
              
-        $this->blogPostDatabase = $blogPostDatabase;
         $this->blogUserDatabase = $blogUserDatabase;
         $this->view = $view;
         $this->sessionUtility = $sessionUtility;

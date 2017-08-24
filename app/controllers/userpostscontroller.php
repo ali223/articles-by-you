@@ -4,7 +4,6 @@ namespace App\Controllers;
 use App\Models\BlogPostDB;
 use App\Models\BlogUserDB;
 use App\Models\BlogPost;
-use App\Models\BlogComment;
 use App\Validators\FilterInputTrait;
 use App\Validators\FormValidator;
 

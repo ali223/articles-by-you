@@ -5,16 +5,16 @@ namespace app\controllers;
 
 class View 
 {
-    private $headerFile;
-    private $contentFile;
-    private $footerFile;
+    protected $contentFile;
+    protected $headerFile;
+    protected $footerFile;
     
-    private $data = [];
+    protected $data = [];
     
-    public function __construct($headerFile = "views/header.php", $contentFile, $footerFile="views/footer.php")
+    public function __construct($contentFile = null, $headerFile = "views/header.php", $footerFile="views/footer.php")
     {
-        $this->headerFile = $headerFile;
         $this->contentFile = $contentFile;
+        $this->headerFile = $headerFile;
         $this->footerFile = $footerFile;
         
     }

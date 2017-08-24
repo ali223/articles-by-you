@@ -1,6 +1,8 @@
 <?php
 require "vendor/autoload.php";
 
+require_once 'config.php';
+
 $routes = require 'configroutes.php';
 
  $uri = htmlspecialchars(
