@@ -10,6 +10,7 @@ use App\Validators\FormValidator;
 
 use App\Utilities\RedirectTrait;
 use App\Utilities\SessionUtility;
+use App\Utilities\InputUtility;
 
 class UsersController 
 {
@@ -38,7 +39,7 @@ class UsersController
         
     }
 
-    public function store() 
+    public function store(InputUtility $input) 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -46,11 +47,11 @@ class UsersController
             return;
         }
 
-        $blogUser = $this->createBlogUserFromPostData($_POST);
+        $blogUser = $this->createBlogUserFromPostData($input->posts());
 
         $blogUser->userRegDate = time();
 
-        $errorMessages = $this->validateUserForm($_POST);
+        $errorMessages = $this->validateUserForm($input->posts());
 
         if ($this->blogUserDatabase->userExists($blogUser->userName)) {
             $errorMessages[] = "The User Name $blogUser->userName alreadys exists. Please choose a different user name.";

@@ -4,6 +4,7 @@ namespace App;
 use Exception;
 
 use App\Models\Database;
+use App\Utilities\InputUtility;
 
 use Illuminate\Container\Container;
 
@@ -37,6 +38,11 @@ class Route
 		$container->bind(Database::class, function () {
 			return new Database(DB_DSN, DB_USER, DB_PASSWORD);
 		});
+
+		$container->bind(InputUtility::class, function () {
+			return InputUtility::createFromGlobals();
+		});
+
 
 		$controller = $container->make('App\\Controllers\\' . $controller);
 
