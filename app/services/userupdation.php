@@ -36,11 +36,12 @@ class UserUpdation
             throw new UserUpdationException('Form Error updating user', $errorMessages);
         }
 
-        if($this->userDatabase->updateUser($this->blogUser)) {
-            return true;
+        if( ! $this->userDatabase->updateUser($this->blogUser)) {
+            throw new UserUpdationException('Error updating user', 
+                ['Could not update user profile due to a system error']);
         }
 
-        throw new UserUpdationException('Error updating user');
+        return true;
 
 	}
 
@@ -62,6 +63,55 @@ class UserUpdation
         ->validateEmail('userEmail')
         ->validateURL('userUrl')
         ->getValidationErrors();
+    }
+
+    public function updatePassword()
+    {
+        $errorMessages = $this->validatePasswordForm($this->input->posts());
+
+        if($errorMessages) {
+            throw new UserUpdationException('Passwords form error', $errorMessages);
+        }
+
+        $passwordCurrent = sha1($this->input->post('txtuserpasswordcurrent'));
+
+        $passwordNew = sha1($this->input->post('txtuserpasswordnew1'));
+
+        $username = $this->session->getLoggedInUsername();
+
+        if (! $this->userDatabase
+                ->authenticateUser($username, $passwordCurrent)) {
+
+            throw new UserUpdationException('Error Updating Password', 
+                ['The current password entered is not valid.']);            
+        }
+
+
+        
+        if(! $this->userDatabase
+                    ->updatePassword($username, $passwordNew)) {
+            
+            throw new UserUpdationException('Error Updating Password', 
+                ['Could not update password due to a system error.']);
+        }
+
+        return true;
+
+    }
+
+    protected function validatePasswordForm($postData)
+    {
+        return ($this->validator->setPostData($postData))
+        ->validateRequireds([
+            'txtuserpasswordcurrent' => 'Please enter your current password.',
+            'txtuserpasswordnew1' => 'Please enter your new password.',
+            'txtuserpasswordnew2' => 'Please confirm your new password'
+        ])
+        ->validateMatches(
+            ['txtuserpasswordnew1', 'txtuserpasswordnew2'], 
+            'New and Confirmed Passwords must match')
+        ->getValidationErrors();
+
     }
 
 }

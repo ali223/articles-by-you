@@ -150,10 +150,10 @@ class BlogUserDB
             $stmt->bindValue(":puseremail",$blogUser->userEmail);
             $stmt->bindValue(":pusername",$blogUser->userName);
            
-            $result= $stmt->execute();
-            return $stmt->rowCount();
+            return $stmt->execute();
 
          }catch(PDOException $pe) {
+
              error_log("<br /> error occurred " . $pe->getMessage());
              return false;
         } 
@@ -171,9 +171,7 @@ class BlogUserDB
             $stmt->bindValue(":puserpassword",$userpassword);
             $stmt->bindValue(":pusername",$username);
            
-            $result= $stmt->execute();
-
-            return $stmt->rowCount();
+            return $stmt->execute();
 
         }catch(PDOException $pe) {
             error_log("<br /> error occurred " . $pe->getMessage());

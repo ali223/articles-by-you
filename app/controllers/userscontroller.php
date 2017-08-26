@@ -5,9 +5,6 @@ namespace App\Controllers;
 use App\Models\BlogUser;
 use App\Models\BlogUserDB;
 
-use App\Validators\FilterInputTrait;
-use App\Validators\FormValidator;
-
 use App\Utilities\RedirectTrait;
 use App\Utilities\SessionUtility;
 use App\Utilities\InputUtility;
@@ -22,7 +19,7 @@ use App\Services\UserAuthenticationException;
 
 class UsersController 
 {
-    use FilterInputTrait, RedirectTrait;
+    use RedirectTrait;
 
     protected $blogUserDatabase;
     protected $view;
@@ -137,67 +134,39 @@ class UsersController
                 'blogUser' => $updation->getOldPostData(),
                 'errorMessages' => $exception->getErrorMessages()
             ]);
-            
+
         }
     }
 
-    public function userPassword() 
+    public function userPassword(UserUpdation $updation) 
     {
 
         $this->redirectIfUserNotLoggedIn();
+
+        $this->view->setHeaderFile("views/userheader.php");
+
+        $this->view->setData('username', $this->sessionUtility->getLoggedInUsername());
+
         
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
 
-            $this->view->setHeaderFile("views/userheader.php");
-
-            return $this->view->show('users/userpassword' , [
-                'username' => $this->sessionUtility->getLoggedInUsername()
-            ]);
-
+            return $this->view->show('users/userpassword');
         }
 
-        $errorMessages = (new FormValidator($_POST))
-            ->validateRequireds([
-                'txtuserpasswordcurrent' => 'Please enter your current password.',
-                'txtuserpasswordnew1' => 'Please enter your new password.',
-                'txtuserpasswordnew2' => 'Please confirm your new password'
-            ])
-            ->validateMatches(
-                ['txtuserpasswordnew1', 'txtuserpasswordnew2'], 
-                'New and Confirmed Passwords must match')
-            ->getValidationErrors();
+        try {
 
-        $passwordCurrent = sha1($this->filterInput($_POST['txtuserpasswordcurrent']));
+            $updation->updatePassword();
 
-        $passwordNew = sha1($this->filterInput($_POST['txtuserpasswordnew1']));
-
-        $username = $this->sessionUtility->getLoggedInUsername();
-
-        if (empty($errorMessages) && ! $this->blogUserDatabase
-                ->authenticateUser($username, $passwordCurrent)) {
-            $errorMessages[] = "The current password entered is not valid.";
-        }
-
-
-        if($errorMessages) {
+            $this->sessionUtility->put('message', 'Your password has been updated successfully.');
             
-            $this->view->setHeaderFile("views/userheader.php");
+            return $this->redirectTo('/home');
 
+        } catch(UserUpdationException $exception) {
+         
             return $this->view->show('users/userpassword' ,[
-                'username' => $this->sessionUtility->getLoggedInUsername(),
-                'errorMessages' => $errorMessages,
+                'errorMessages' => $exception->getErrorMessages()
             ]);
 
         }     
-        
-        $result = $this->blogUserDatabase
-                    ->updatePassword($username, $passwordNew);
-
-        $message = $result ? "Your password has been changed successfully."              : "The password could not be updated.";
-
-        $this->sessionUtility->put('message', $message);
-            
-        return $this->redirectTo('/home');
-             
     }
 }
