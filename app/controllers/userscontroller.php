@@ -46,7 +46,7 @@ class UsersController
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
-            $this->userRegistrationForm();
+            $this->create();
             return;
         }
 
