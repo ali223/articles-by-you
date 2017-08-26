@@ -13,7 +13,9 @@ use App\Utilities\SessionUtility;
 use App\Utilities\InputUtility;
 
 use App\Services\UserRegistration;
+use App\Services\UserAuthentication;
 use App\Services\UserRegistrationException;
+use App\Services\UserAuthenticationException;
 
 class UsersController 
 {
@@ -66,7 +68,7 @@ class UsersController
 
     }
 
-    public function login() 
+    public function login(UserAuthentication $authentication) 
     {
         $this->redirectIfUserLoggedIn();
 
@@ -74,32 +76,20 @@ class UsersController
             return $this->view->show('users/login');
         }
 
-        $errorMessages = (new FormValidator($_POST))
-                ->validateRequireds([
-                    'txtusername' => 'Please enter your username',
-                    'txtuserpassword' => 'Please enter your password'
-                ])->getValidationErrors();
+        try {
 
-        if($errorMessages) {
-            return $this->view->show('users/login', 
-                            compact('errorMessages'));         
-        }
+            $username = $authentication->authenticate();
 
-        $username = $this->filterInput($_POST['txtusername']);
-        $password = $this->filterInput($_POST['txtuserpassword']);
-
-
-        if (!($this->blogUserDatabase->authenticateUser($username, sha1($password)))) {
-
-            $errorMessages[] = "Login Failed : Username and password combination not valid.";
-            
-            return $this->view->show('users/login', 
-                            compact('errorMessages'));         
-        }
-
-        $this->sessionUtility->loginUser($username);
+            $this->sessionUtility->loginUser($username);
         
-        return $this->redirectTo('/home');
+            return $this->redirectTo('/home');
+
+        } catch (UserAuthenticationException $exception) {
+            return $this->view->show('users/login', [
+                    'errorMessages' => $exception->getErrorMessages()
+                ]);         
+        }
+
     }
 
     public function logout() 
