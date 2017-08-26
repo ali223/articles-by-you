@@ -30,16 +30,8 @@ class UserUpdation
 
         $this->blogUser->userName = $this->session->getLoggedInUsername();
 
-        $errorMessages = (new FormValidator($_POST))
-            ->validateRequireds([
-                'userFirstName' => 'First Name is required',
-                'userLastName' => 'Last Name is required',
-                'userEmail' => 'Email Address is required'
-            ])
-            ->validateEmail('userEmail')
-            ->validateURL('userUrl')
-            ->getValidationErrors();
-       
+        $errorMessages =  $this->validateUserForm($this->input->posts());
+
         if ($errorMessages) {
             throw new UserUpdationException('Form Error updating user', $errorMessages);
         }
@@ -52,9 +44,24 @@ class UserUpdation
 
 	}
 
+
     public function getOldPostData()
     {
         return $this->blogUser->setData($this->input->posts());
+    }
+
+
+    protected function validateUserForm($postData) 
+    {
+        return ($this->validator->setPostData($postData))
+        ->validateRequireds([
+            'userFirstName' => 'First Name is required',
+            'userLastName' => 'Last Name is required',
+            'userEmail' => 'Email Address is required'
+        ])
+        ->validateEmail('userEmail')
+        ->validateURL('userUrl')
+        ->getValidationErrors();
     }
 
 }
