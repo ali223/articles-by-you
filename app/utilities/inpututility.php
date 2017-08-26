@@ -55,9 +55,9 @@ class InputUtility
     {
         $result = null;
 
-        if(isset($this->input[$type][$key])) {
+        if(isset($this->inputs[$type][$key])) {
 
-            $result =  $this->input[$type][$key];
+            $result =  $this->inputs[$type][$key];
 
             $result = $this->filterInput($result);
         }

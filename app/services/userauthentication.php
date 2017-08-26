@@ -20,7 +20,7 @@ class UserAuthentication
 
 	public function authenticate()
 	{
-        $errorMessages = ($this->validator->setPostData($_POST))
+        $errorMessages = ($this->validator->setPostData($this->input->posts()))
                 ->validateRequireds([
                     'txtusername' => 'Please enter your username',
                     'txtuserpassword' => 'Please enter your password'
@@ -30,9 +30,8 @@ class UserAuthentication
             throw new UserAuthenticationException('Required data missing', $errorMessages);
         }
 
-        $username = ($_POST['txtusername']);
-        $password = ($_POST['txtuserpassword']);
-
+        $username = $this->input->post('txtusername');
+        $password = $this->input->post('txtuserpassword');
 
         if (!($this->userDatabase->authenticateUser($username, sha1($password)))) {
 
