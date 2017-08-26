@@ -14,7 +14,10 @@ use App\Utilities\InputUtility;
 
 use App\Services\UserRegistration;
 use App\Services\UserAuthentication;
+use App\Services\UserUpdation;
+
 use App\Services\UserRegistrationException;
+use App\Services\UserUpdationException;
 use App\Services\UserAuthenticationException;
 
 class UsersController 
@@ -104,54 +107,38 @@ class UsersController
         return $this->view->show('users/login', compact('logoutMessage'));
     }
 
-    public function userProfile() 
+    public function userProfile(UserUpdation $updation) 
     {
 
         $this->redirectIfUserNotLoggedIn();
 
+        $this->view->setHeaderFile("views/userheader.php");
+
+        $this->view->setData('username', $this->sessionUtility->getLoggedInUsername());
+
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
 
-            $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
+            $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());            
             
-            $this->view->setHeaderFile("views/userheader.php");
-            
-            return $this->view->show('users/userprofile' ,[
-                'username' => $this->sessionUtility->getLoggedInUsername(),
-                'blogUser' => $blogUser,
-            ]);
+            return $this->view->show('users/userprofile', compact('blogUser'));
         }
 
-        $blogUser = $this->createBlogUserFromPostData($_POST);
+        try {
 
-        $blogUser->userName = $this->sessionUtility->getLoggedInUsername();
+            $updation->updateProfile();
 
-        $errorMessages = (new FormValidator($_POST))
-            ->validateRequireds([
-                'userFirstName' => 'First Name is required',
-                'userLastName' => 'Last Name is required',
-                'userEmail' => 'Email Address is required'
-            ])
-            ->validateEmail('userEmail')
-            ->validateURL('userUrl')
-            ->getValidationErrors();
-       
-        if (!empty($errorMessages)) {
+            $this->sessionUtility->put('message', "Your profile has been updated successfully");
 
-            $this->view->setHeaderFile("views/userheader.php");
+            return $this->redirectTo('/home');
+
+        } catch(UserUpdationException $exception) {
 
             return $this->view->show('users/userprofile' ,[
-                'username' => $this->sessionUtility->getLoggedInUsername(),
-                'blogUser' => $blogUser,
-                'errorMessages' => $errorMessages
+                'blogUser' => $updation->getOldPostData(),
+                'errorMessages' => $exception->getErrorMessages()
             ]);
-
+            
         }
-
-        $this->blogUserDatabase->updateUser($blogUser);
-
-        $this->sessionUtility->put('message', "Your profile has been updated successfully");
-
-        return $this->redirectTo('/home');
     }
 
     public function userPassword() 
