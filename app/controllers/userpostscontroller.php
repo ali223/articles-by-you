@@ -9,6 +9,10 @@ use App\Validators\FormValidator;
 
 use App\Utilities\RedirectTrait;
 use App\Utilities\SessionUtility;
+use App\Utilities\InputUtility;
+
+use App\Services\BlogPostCreation;
+use App\Services\BlogPostCreationException;
 
 class UserPostsController 
 {
@@ -18,13 +22,16 @@ class UserPostsController
     protected $blogUserDatabase;
     protected $view;
     protected $sessionUtility;
+    protected $input;
 
-    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, SessionUtility $sessionUtility, View $view) 
+    public function __construct(BlogUserDB $blogUserDatabase, BlogPostDB $blogPostDatabase, SessionUtility $sessionUtility, View $view, InputUtility $input) 
     {
 
         $this->sessionUtility = $sessionUtility;
 
         $this->redirectIfUserNotLoggedIn();
+
+        $this->input = $input;
 
         $this->blogUserDatabase = $blogUserDatabase;
         $this->blogPostDatabase = $blogPostDatabase;
@@ -82,7 +89,7 @@ class UserPostsController
 
     }
 
-    public function create() 
+    public function create(BlogPostCreation $blogPostCreation) 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -90,38 +97,24 @@ class UserPostsController
             return $this->view->show('users/usernewarticle');
         }
 
-        $blogPost = $this->createBlogPostFromPostData($_POST);
+        try {
 
-        $validator = new FormValidator($_POST);
+            $blogPost = $blogPostCreation->createPost();
 
-        $validator->validateRequireds([
-                'txtposttitle' => 'Please enter the Article Title',
-                'txtpostdesc' => 'Please enter the Article Description',
-                'txtposttext' => 'Please enter the Article Text'
-        ])->validateUploadedFile($_FILES, 'txtpostimage');
+            $this->sessionUtility->put('message', "Your New Article titled $blogPost->postTitle has been created successfully");
 
-        $errorMessages = $validator->getValidationErrors();
+            return $this->redirectTo('/home');
 
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
-
-        $blogPost->postUserId = $blogUser->userId;
-     
-        if (!empty($errorMessages)) {
+        } catch(BlogPostCreationException $exception) {
 
             return $this->view->show('users/usernewarticle', [
-                'errorMessages' => $errorMessages,
-                'blogPost' => $blogPost,
-                'blogUser' => $blogUser
+                'errorMessages' => $exception->getErrorMessages(),
+                'blogPost' => $blogPostCreation->getOldPostData(),
+                'blogUser' =>  $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername())
             ]);
+
         }
-            
-        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
 
-        $this->blogPostDatabase->addPost($blogPost);
-
-        $this->sessionUtility->put('message', "Your New Article titled $blogPost->postTitle has been created successfully");
-
-        return $this->redirectTo('/home');
     }
 
     public function update() 

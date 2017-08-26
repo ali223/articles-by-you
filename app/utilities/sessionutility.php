@@ -14,6 +14,11 @@ class SessionUtility
     {     
         return isset($_SESSION['username']);
     }
+
+    public function getLoggedInUserId() 
+    {
+        return isset($_SESSION['userid']) ? $_SESSION['userid'] : null;
+    }
     
     public function getLoggedInUsername() 
     {
