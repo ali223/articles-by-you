@@ -25,13 +25,10 @@ class UsersController
     protected $view;
     protected $sessionUtility;
     
-    public function __construct(BlogUserDB $blogUserDatabase, View $view, SessionUtility $sessionUtility) 
+    public function __construct(View $view, SessionUtility $sessionUtility) 
     {
-             
-        $this->blogUserDatabase = $blogUserDatabase;
         $this->view = $view;
-        $this->sessionUtility = $sessionUtility;
-       
+        $this->sessionUtility = $sessionUtility;  
     }
 
 
@@ -104,7 +101,7 @@ class UsersController
         return $this->view->show('users/login', compact('logoutMessage'));
     }
 
-    public function userProfile(UserUpdation $updation) 
+    public function userProfile(UserUpdation $updation, BlogUserDB $userDatabase) 
     {
 
         $this->redirectIfUserNotLoggedIn();
@@ -115,7 +112,7 @@ class UsersController
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
 
-            $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());            
+            $blogUser = $userDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());            
             
             return $this->view->show('users/userprofile', compact('blogUser'));
         }
