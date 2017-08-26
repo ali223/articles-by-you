@@ -7,9 +7,15 @@ class FormValidator
 	private $validationErrors = [];
 	private $postData;
 
-	public function __construct($postData)
+	public function __construct($postData = [])
 	{
 		$this->postData = $postData;
+	}
+
+	public function setPostData($postData) {
+		$this->postData = $postData;
+
+		return $this;
 	}
 
 	public function validateRequireds($fields)

@@ -12,6 +12,9 @@ use App\Utilities\RedirectTrait;
 use App\Utilities\SessionUtility;
 use App\Utilities\InputUtility;
 
+use App\Services\UserRegistration;
+use App\Services\UserRegistrationException;
+
 class UsersController 
 {
     use FilterInputTrait, RedirectTrait;
@@ -39,7 +42,7 @@ class UsersController
         
     }
 
-    public function store(InputUtility $input) 
+    public function store(UserRegistration $registration) 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -47,68 +50,19 @@ class UsersController
             return;
         }
 
-        $blogUser = $this->createBlogUserFromPostData($input->posts());
+        try {
 
-        $blogUser->userRegDate = time();
+            $blogUser = $registration->register();
 
-        $errorMessages = $this->validateUserForm($input->posts());
+            return $this->view
+                ->show('users/userCreated', compact('blogUser'));
 
-        if ($this->blogUserDatabase->userExists($blogUser->userName)) {
-            $errorMessages[] = "The User Name $blogUser->userName alreadys exists. Please choose a different user name.";
-        }
-           
-        if ($errorMessages) {
-
+        } catch(UserRegistrationException $exception) {
             return $this->view->show('users/regform', [
-                    'blogUser' => $blogUser,
-                    'errorMessages' => $errorMessages
-                ]);
-
-        }      
-
-        if ($this->blogUserDatabase->addUser($blogUser)) {
-
-            return $this->view->show('users/userCreated', [
-                    'blogUser' => $blogUser,
-                    'errorMessages' => $errorMessages                
+                    'blogUser' => $registration->getOldPostData(),
+                    'errorMessages' => $exception->getErrorMessages()
                 ]);
         }
-
-    }
-
-    protected function validateUserForm($postData)
-    {
-        return (new FormValidator($postData))
-            ->validateRequireds([
-                'userName' => 'User Name is required',
-                'userPassword' => 'Password is required',
-                'userPassword2' => 'Re-enter Password is required',
-                'userFirstName' => 'First Name is required',
-                'userLastName' => 'Last Name is required',
-                'userEmail' => 'Email Address is required'
-            ])
-            ->validateMatches(
-                ['userPassword', 'userPassword2'], 
-                'Passwords must match'
-            )
-            ->validateEmail('userEmail')
-            ->validateAlphaNumeric('userName',
-                        'User Name : Only letters a-z and numbers 0-9 allowed. Must start with letters, and then numbers, e.g gemini233')
-            ->validateURL('userUrl')
-            ->getValidationErrors();
-
-    }
-
-    protected function createBlogUserFromPostData($postData)
-    {
-        $blogUser = new BlogUser();
-
-        foreach($postData as $field => $data) {
-            $blogUser->$field = 
-                $field == 'userPassword' ? sha1($data) : $data;
-        }
-
-        return $blogUser;
 
     }
 
