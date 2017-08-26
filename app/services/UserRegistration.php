@@ -6,8 +6,6 @@ use App\Models\BlogUser;
 use App\Utilities\InputUtility;
 use App\Validators\FormValidator;
 
-//userexception
-
 class UserRegistration
 {
 	protected $userDatabase;
