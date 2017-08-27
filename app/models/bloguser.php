@@ -19,21 +19,8 @@ class BlogUser
     
 
     public function __construct($userData = []) 
-    {
-
-        
+    {        
         $this->setData($userData);
-
-        // $this->userId = isset($userData['userId']) ? $userData['userId'] : null;
-        // $this->userName= $name;
-        // $this->userFirstName= $firstName;
-        // $this->userLastName= $lastName;
-        // $this->userType= $type;
-        // $this->userUrl= $url;
-        // $this->userEmail= $email;
-        // $this->userRegDate= $regDate;
-        // $this->userPhoto= $photo;
-        // $this->userPassword = $password;
     }
 
     public function setData($userData = [])
@@ -46,7 +33,6 @@ class BlogUser
         }
 
         return $this;
-
     }
 
 
