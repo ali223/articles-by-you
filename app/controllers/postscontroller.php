@@ -6,7 +6,6 @@ use App\Models\BlogCommentDB;
 use App\Models\BlogUserDB;
 use App\Models\BlogPost;
 use App\Models\BlogComment;
-use App\Validators\FilterInputTrait;
 use App\Validators\FormValidator;
 
 use App\Utilities\InputUtility;
@@ -14,7 +13,6 @@ use App\Utilities\InputUtility;
 
 class PostsController 
 {
-    use FilterInputTrait;
 
     protected $blogPostDatabase;
     protected $blogUserDatabase;
