@@ -68,15 +68,17 @@ class PostsController
         $postId = $input->get('id');
 
         if (is_null($postId)) {
-            $this->error("No post id mentioned");
-            return;
+            $errorMessage = "No post id mentioned";
+            return $this->view
+                    ->show('posts/error', compact('errorMessage'));
         }
 
         $blogPost = $this->blogPostDatabase->getPost($postId);
 
         if (!$blogPost instanceof BlogPost) {
-            $this->error("Cannot find the post with id $id");
-            return;
+            $errorMessage = "Cannot find the post with id {$postId}";
+            return $this->view
+                    ->show('posts/error', compact('errorMessage'));
         }
 
         $blogUser = $this->blogUserDatabase->getUserById($blogPost->postUserId);
@@ -94,11 +96,6 @@ class PostsController
                 'blogCommentsList' => $blogCommentsList
             ]);
 
-    }
-
-    public function error($errorMessage) 
-    {
-        return $this->view->show('posts/error', compact('errorMessage'));
     }
 
     public function createBlogCommentFromPostData($postData)
