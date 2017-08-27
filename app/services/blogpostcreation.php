@@ -32,21 +32,23 @@ class BlogPostCreation
 
 	public function createPost()
 	{
+
+        $errorMessages = $this->validatePostForm($this->input->posts(), $this->input->files());
+
+        if ($errorMessages) {
+            throw new BlogPostCreationException('Post Form Errors', $errorMessages);            
+        }
+
         $this->blogPost = $this->blogPost->setData($this->input->posts());
 
-        $errorMessages = $this->validatePostForm($this->input->posts());
-        
         $this->blogUser = $this->userDatabase->getUserByUsername($this->session->getLoggedInUsername());
 
         $this->blogPost->postUserId = $this->blogUser->userId;
 
         $this->blogPost->postDate = time();
      
-        if ($errorMessages) {
-            throw new BlogPostCreationException('Post Form Errors', $errorMessages);            
-        }
             
-        $this->blogPost->postImage = $this->uploadFile($_FILES, 'postImage');
+        $this->blogPost->postImage = $this->uploadFile($this->input->files(), 'postImage');
 
         $this->postDatabase->addPost($this->blogPost);
 
@@ -59,14 +61,14 @@ class BlogPostCreation
 		return $this->blogPost->setData($this->input->posts());
 	}
 
-    protected function validatePostForm($postData)
+    protected function validatePostForm($postData, $fileData = [])
     {
-         return ($this->validator->setPostData($this->input->posts()))
+         return ($this->validator->setPostData($postData))
                 ->validateRequireds([
                     'postTitle' => 'Please enter the Article Title',
                     'postDesc' => 'Please enter the Article Description',
                     'postText' => 'Please enter the Article Text'
-                ])->validateUploadedFile($_FILES, 'postImage')
+                ])->validateUploadedFile($fileData, 'postImage')
                   ->getValidationErrors();
 
     }

@@ -15,7 +15,11 @@ class InputUtility
 
     public static function createFromGlobals()
     {
-        return new static(['get' => $_GET, 'post' => $_POST]);
+        return new static([
+                'get' => $_GET, 
+                'post' => $_POST, 
+                'files' => $_FILES
+            ]);
     }
 
 
@@ -37,6 +41,16 @@ class InputUtility
     public function post($key)
     {
         return $this->fetch('post', $key);
+    }
+
+    public function file($key)
+    {
+        return $this->fetch('files', $key);
+    }
+
+    public function files()
+    {
+        return $this->inputs['files'];
     }
 
     public function posts()

@@ -21,7 +21,6 @@ class UsersController
 {
     use RedirectTrait;
 
-    protected $blogUserDatabase;
     protected $view;
     protected $sessionUtility;
     
