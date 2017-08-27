@@ -1,8 +1,6 @@
 <?php
 namespace App\Services;
 
-use App\Models\BlogUserDB;
-use App\Models\BlogUser;
 use App\Models\BlogPostDB;
 use App\Models\BlogPost;
 use App\Utilities\InputUtility;
@@ -11,20 +9,16 @@ use App\Validators\FormValidator;
 
 class BlogPostUpdation
 {
-	protected $userDatabase;
     protected $postDatabase;
 	protected $input;
-	protected $blogUser;
     protected $blogPost;
 	protected $validator;
     protected $session;
 
-	public function __construct(BlogUserDB $userDatabase, BlogPostDB $postDatabase, InputUtility $input, BlogUser $blogUser, BlogPost $blogPost, FormValidator $validator, SessionUtility $session)
+	public function __construct(BlogPostDB $postDatabase, InputUtility $input, BlogPost $blogPost, FormValidator $validator, SessionUtility $session)
 	{
-		$this->userDatabase = $userDatabase;
         $this->postDatabase = $postDatabase;
 		$this->input = $input;
-		$this->blogUser = $blogUser;
         $this->blogPost = $blogPost;
 		$this->validator = $validator;
         $this->session = $session;
@@ -42,9 +36,7 @@ class BlogPostUpdation
 
         $this->blogPost->postDate = strtotime($this->blogPost->postDate);
         
-        $this->blogUser = $this->userDatabase->getUserByUsername($this->session->getLoggedInUsername());
-
-        $this->blogPost->postUserId = $this->blogUser->userId;
+        $this->blogPost->postUserId = $this->session->getLoggedInUserId();
                  
         $this->blogPost->postImage = $this->uploadFile($this->input->files(), 'postImage');
 

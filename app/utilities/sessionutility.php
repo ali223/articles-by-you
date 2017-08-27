@@ -25,9 +25,10 @@ class SessionUtility
         return isset($_SESSION['username']) ? $_SESSION['username'] : null;
     }
 
-    public function loginUser($username)
+    public function loginUser($blogUser)
     {
-        $_SESSION['username'] = $username;
+        $_SESSION['username'] = $blogUser->userName;
+        $_SESSION['userid'] = $blogUser->userId;
     }
     
     public function put($key, $value)

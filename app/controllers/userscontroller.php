@@ -64,7 +64,7 @@ class UsersController
 
     }
 
-    public function login(UserAuthentication $authentication) 
+    public function login(UserAuthentication $authentication, BlogUserDB $userDatabase) 
     {
         $this->redirectIfUserLoggedIn();
 
@@ -76,7 +76,9 @@ class UsersController
 
             $username = $authentication->authenticate();
 
-            $this->sessionUtility->loginUser($username);
+            $blogUser = $userDatabase->getUserByUsername($username);
+
+            $this->sessionUtility->loginUser($blogUser);
         
             return $this->redirectTo('/home');
 
