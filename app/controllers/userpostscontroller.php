@@ -4,8 +4,6 @@ namespace App\Controllers;
 use App\Models\BlogPostDB;
 use App\Models\BlogUserDB;
 use App\Models\BlogPost;
-use App\Validators\FilterInputTrait;
-use App\Validators\FormValidator;
 
 use App\Utilities\RedirectTrait;
 use App\Utilities\SessionUtility;
@@ -20,7 +18,7 @@ use App\Services\BlogPostUpdationException;
 
 class UserPostsController 
 {
-    use FilterInputTrait, RedirectTrait;
+    use RedirectTrait;
 
     protected $blogPostDatabase;
     protected $blogUserDatabase;
