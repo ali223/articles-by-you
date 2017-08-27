@@ -10,6 +10,9 @@ use App\Validators\FormValidator;
 
 use App\Utilities\InputUtility;
 
+use App\Services\BlogCommentCreation;
+use App\Services\BlogCommentCreationException;
+
 
 class PostsController 
 {
@@ -42,27 +45,24 @@ class PostsController
             ]);
     }
 
-    public function show(InputUtility $input) 
+    public function show(InputUtility $input, BlogCommentCreation $commentCreation) 
     {
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-   
-            $validator = new FormValidator($input->posts());
 
-            $errorMessages = $validator->validateRequireds([
-                'txtcommentname' => 'Please enter your name',
-                'txtcommenttext' => 'Please enter your comment',
-                'txtcommentpostid' => 'Please enter your comment post id'
-            ])->getValidationErrors();
+            try {
 
-            $blogComment = $this->createBlogCommentFromPostData($input->posts());
+                $blogComment = $commentCreation->createComment();
 
-            if(empty($errorMessages)) {
-                $this->blogCommentDatabase->addComment($blogComment);
-            } else {
-                $this->view->setData("errorMessages",$errorMessages);
-                $this->view->setData('blogComment', $blogComment);
+            } catch (BlogCommentCreationException $exception) {
+
+                $this->view->setData("errorMessages", 
+                            $exception->getErrorMessages());
+                
+                $this->view->setData('blogComment', 
+                            $commentCreation->getOldPostData());
             }
+   
         }
 
         $postId = $input->get('id');
@@ -95,23 +95,6 @@ class PostsController
                 'pageTitle' => $pageTitle,
                 'blogCommentsList' => $blogCommentsList
             ]);
-
-    }
-
-    public function createBlogCommentFromPostData($postData)
-    {
-        $blogComment = new BlogComment();
-
-        $blogComment->commentName = $postData['txtcommentname'];
-
-        $blogComment->commentText = $postData['txtcommenttext'];
-
-        $blogComment->commentPostId = $postData['txtcommentpostid'];
-
-        $blogComment->commentDate = time();
-        $blogComment->commentIsVisible = 1;
-
-        return $blogComment;
 
     }
 
