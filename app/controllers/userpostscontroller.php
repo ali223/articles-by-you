@@ -70,15 +70,13 @@ class UserPostsController
     public function show()
     {
 
-        $errorMessages = [];
+       $postId = $this->input->get('id');
 
-        if (!isset($_GET['id'])) {
+        if (is_null($postId)) {
             return $this->redirectTo('/home');
         }
 
-        $id = $this->filterInput($_GET['id']);
-
-        $blogPost = $this->blogPostDatabase->getPost($id);
+        $blogPost = $this->blogPostDatabase->getPost($postId);
 
         if (!$blogPost) {
             return $this->redirectTo('/home');
@@ -149,16 +147,13 @@ class UserPostsController
 
     public function edit() 
     {
+        $postId = $this->input->get('id');
 
-        if (!(isset($_GET['id']))) {
+        if (is_null($postId)) {
             return $this->redirectTo('/home');
         }
 
-        $id = $this->filterInput($_GET['id']);
-
-        $blogPost = $this->blogPostDatabase->getPost($_GET['id']);
-
-        //exit(var_dump($blogPost));
+        $blogPost = $this->blogPostDatabase->getPost($postId);
 
         if (!$blogPost) {
             return $this->redirectTo('/home');
@@ -172,19 +167,19 @@ class UserPostsController
     public function destroy() 
     {
 
-        if (!(isset($_GET['id']))) {
-            return $this->redirectTo('/home');   
+        $postId = $this->input->get('id');
+
+        if (is_null($postId)) {
+            return $this->redirectTo('/home');
         }
 
-
-        $id = $this->filterInput($_GET['id']);
-        $blogPost = $this->blogPostDatabase->getPost($id);
+        $blogPost = $this->blogPostDatabase->getPost($postId);
 
         if (!$blogPost) {
             return $this->redirectTo('/home');               
         }
 
-        $this->blogPostDatabase->deletePost($id);
+        $this->blogPostDatabase->deletePost($postId);
 
         $this->sessionUtility->put('message', "Your Article titled $blogPost->postTitle has been deleted successfully");
 
