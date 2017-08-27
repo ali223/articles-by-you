@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Exception;
 
-class UserUpdationException extends UserException
+class UserUpdationException extends AppException
 {
 	
 }

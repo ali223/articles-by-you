@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Exception;
 
-class UserAuthenticationException extends UserException
+class UserAuthenticationException extends AppException
 {
 
 }

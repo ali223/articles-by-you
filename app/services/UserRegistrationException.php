@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Exception;
 
-class UserRegistrationException extends UserException
+class UserRegistrationException extends AppException
 {
 
 }

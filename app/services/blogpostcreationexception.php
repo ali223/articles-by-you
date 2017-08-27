@@ -3,20 +3,7 @@ namespace App\Services;
 
 use Exception;
 
-class BlogPostCreationException extends Exception
+class BlogPostCreationException extends AppException
 {
-	protected $errorMessages;
-
-	public function __construct($message, $errorMessages = [])
-	{
-		parent::__construct($message);
-
-		$this->errorMessages = $errorMessages;
-
-	}
-
-	public function getErrorMessages()
-	{
-		return $this->errorMessages;
-	}
+	
 }

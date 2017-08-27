@@ -3,7 +3,7 @@ namespace App\Services;
 
 use Exception;
 
-class UserException extends Exception
+class AppException extends Exception
 {
 	protected $errorMessages;
 
