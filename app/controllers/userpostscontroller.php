@@ -14,6 +14,10 @@ use App\Utilities\InputUtility;
 use App\Services\BlogPostCreation;
 use App\Services\BlogPostCreationException;
 
+use App\Services\BlogPostUpdation;
+use App\Services\BlogPostUpdationException;
+
+
 class UserPostsController 
 {
     use FilterInputTrait, RedirectTrait;
@@ -117,7 +121,7 @@ class UserPostsController
 
     }
 
-    public function update() 
+    public function update(BlogPostUpdation $blogPostUpdation) 
     {
 
         if (!($_SERVER['REQUEST_METHOD'] == 'POST')) {
@@ -125,85 +129,22 @@ class UserPostsController
             return $this->view->show('users/usereditarticle');
         }
 
-        
-        $blogPost = $this->createBlogPostFromPostData($_POST);
+        try {
 
-        $blogPost->postId = $this->filterInput($_POST['txtpostid']);
+            $blogPost = $blogPostUpdation->updatePost();
 
-        $validator = new FormValidator($_POST);
+            $this->sessionUtility->put('message', "Your Article titled $blogPost->postTitle has been updated successfully");
 
-        $validator->validateRequireds([
-                'txtpostid' => 'Please enter the Article Id',
-                'txtposttitle' => 'Please enter the Article Title',
-                'txtpostdesc' => 'Please enter the Article Description',
-                'txtposttext' => 'Please enter the Article Text',
-        ]);
+            return $this->redirectTo('/home');
 
-        if($_FILES['txtpostimage']['name']) {
-            $validator->validateUploadedFile($_FILES, 'txtpostimage');
-        }
-
-        $errorMessages = $validator->getValidationErrors();
-
-        $blogUser = $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername());
-
-        $blogPost->postUserId = $blogUser->userId;
-     
-        if (!empty($errorMessages)) {
+        } catch (BlogPostUpdationException $exception) {
             return $this->view->show('users/usereditarticle', [
-                'errorMessages' => $errorMessages,
-                'blogPost' => $blogPost,
-                'blogUser' => $blogUser
+                'errorMessages' => $exception->getErrorMessages(),
+                'blogPost' => $blogPostUpdation->getOldPostData(),
+                'blogUser' => $this->blogUserDatabase->getUserByUsername($this->sessionUtility->getLoggedInUsername())
             ]);            
         }
             
-        $blogPost->postImage = $this->uploadFile($_FILES, 'txtpostimage');
-
-        $this->blogPostDatabase->updatePost($blogPost);
-
-        $this->sessionUtility->put('message', "Your Article titled $blogPost->postTitle has been updated successfully");
-
-        return $this->redirectTo('/home');
-
-    }
-
-
-    protected function uploadFile($fileData, $field)
-    {
-        $targetdir = "images/";
-
-        $targetFile = 
-            $targetdir . basename($fileData[$field]['name']);
-
-        if(move_uploaded_file($fileData[$field]['tmp_name'], $targetFile)) {
-            return $targetFile;
-        }
-
-        return '';
-
-    }
-
-    protected function createBlogPostFromPostData($postData)
-    {
-        $blogPost = new BlogPost();
-
-        $blogPost->postTitle = 
-                    $this->filterInput($postData['txtposttitle']);
-
-        $blogPost->postDesc = 
-                    $this->filterInput($postData['txtpostdesc']);
-
-        $blogPost->postText = 
-                    $this->filterInput($postData['txtposttext']);
-
-        $blogPost->postIsVisible = 
-                    $this->filterInput($postData['txtpostisvisible']);
-
-        $blogPost->postReads = 0;            
-
-        $blogPost->postDate = time();
-
-        return $blogPost;
     }
 
     public function edit() 
@@ -216,6 +157,8 @@ class UserPostsController
         $id = $this->filterInput($_GET['id']);
 
         $blogPost = $this->blogPostDatabase->getPost($_GET['id']);
+
+        //exit(var_dump($blogPost));
 
         if (!$blogPost) {
             return $this->redirectTo('/home');

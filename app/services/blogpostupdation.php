@@ -9,7 +9,7 @@ use App\Utilities\InputUtility;
 use App\Utilities\SessionUtility;
 use App\Validators\FormValidator;
 
-class BlogPostCreation
+class BlogPostUpdation
 {
 	protected $userDatabase;
     protected $postDatabase;
@@ -30,25 +30,25 @@ class BlogPostCreation
         $this->session = $session;
 	}
 
-	public function createPost()
+	public function updatePost()
 	{
         $this->blogPost = $this->blogPost->setData($this->input->posts());
+
+        $this->blogPost->postDate = strtotime($this->blogPost->postDate);
 
         $errorMessages = $this->validatePostForm($this->input->posts());
         
         $this->blogUser = $this->userDatabase->getUserByUsername($this->session->getLoggedInUsername());
 
         $this->blogPost->postUserId = $this->blogUser->userId;
-
-        $this->blogPost->postDate = time();
      
         if ($errorMessages) {
-            throw new BlogPostCreationException('Post Form Errors', $errorMessages);            
+            throw new BlogPostUpdationException('Post Form Errors', $errorMessages);            
         }
             
         $this->blogPost->postImage = $this->uploadFile($_FILES, 'postImage');
 
-        $this->postDatabase->addPost($this->blogPost);
+        $this->postDatabase->updatePost($this->blogPost);
 
         return $this->blogPost;
 
@@ -61,14 +61,19 @@ class BlogPostCreation
 
     protected function validatePostForm($postData)
     {
-         return ($this->validator->setPostData($this->input->posts()))
+         $this->validator->setPostData($this->input->posts())
                 ->validateRequireds([
+                    'postId' => 'Please enter the Article Id',
                     'postTitle' => 'Please enter the Article Title',
                     'postDesc' => 'Please enter the Article Description',
                     'postText' => 'Please enter the Article Text'
-                ])->validateUploadedFile($_FILES, 'postImage')
-                  ->getValidationErrors();
+                ]);
 
+        if($_FILES['postImage']['name']) {
+            $validator->validateUploadedFile($_FILES, 'postImage');
+        }
+
+        return $this->validator->getValidationErrors();
     }
 
     protected function uploadFile($fileData, $field)
@@ -83,7 +88,6 @@ class BlogPostCreation
         }
 
         return '';
-
     }
 
 }
